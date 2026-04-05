@@ -6,8 +6,10 @@ import { useSessionStore } from '../store/sessionStore';
 import { Activity, CheckCircle, Target, Award, Play, ChevronRight, Clock, User, ShieldCheck, ArrowRight } from 'lucide-react';
 import clsx from 'clsx';
 
+import { useAuthStore } from '../store/authStore';
+
 export default function Dashboard() {
-  const { userName } = useSessionStore();
+  const { user } = useAuthStore();
   const { stats, recentSessions, loading } = useDashboard();
 
   if (loading || !stats) {
@@ -23,21 +25,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-12 selection:bg-primary-100">
-      <div className="sticky top-0 z-50 glass-nav">
-        <Navbar
-          rightContent={
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-bold text-slate-800 bg-white/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white shadow-sm">
-                {userName}
-              </span>
-              <Link to="/" className="text-sm text-slate-500 hover:text-rose-600 font-bold transition-colors">
-                Sign Out
-              </Link>
-            </div>
-          }
-        />
-      </div>
-
       <main className="max-w-screen-xl mx-auto px-4 sm:px-6 pt-10 space-y-10 animate-fade-in relative z-10">
         
         {/* decorative glow */}
@@ -47,14 +34,20 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 card p-8 border-t-4 border-t-primary-500">
           <div>
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 tracking-tight mb-2">
-              Welcome back, {userName.split(' ')[0]}
+              Welcome back, {user?.full_name.split(' ')[0]}
             </h1>
-            <p className="text-slate-500 font-medium text-lg">Ready for your next clinical simulation protocol?</p>
+            <p className="text-slate-500 font-medium text-lg">
+              {user?.role === 'student'
+                ? 'Ready for your next clinical simulation protocol?'
+                : `Managing the platform as ${user?.role.replace('_', ' ')}.`}
+            </p>
           </div>
-          <Link to="/session" className="btn-primary py-4 px-8 text-lg group">
-            <Play size={20} className="fill-white group-hover:scale-110 transition-transform" />
-            Launch Simulator
-          </Link>
+          {user?.role === 'student' && (
+            <Link to="/session" className="btn-primary py-4 px-8 text-lg group">
+              <Play size={20} className="fill-white group-hover:scale-110 transition-transform" />
+              Launch Simulator
+            </Link>
+          )}
         </div>
 
         {/* ── Stats Grid ── */}
