@@ -70,3 +70,10 @@ class FrequencyEnum(int, Enum):
     F4000 = 4000
     F6000 = 6000
     F8000 = 8000
+
+
+class UserRoleEnum(str, Enum):
+    SUPER_ADMIN = "super_admin"
+    UNIVERSITY_ADMIN = "university_admin"
+    LAB_ADMIN = "lab_admin"
+    STUDENT = "student"

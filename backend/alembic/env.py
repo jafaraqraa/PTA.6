@@ -52,6 +52,7 @@ def do_run_migrations(connection: Connection) -> None:
         connection=connection,
         target_metadata=target_metadata,
         compare_type=True,  # يكشف تغيير نوع الأعمدة
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
