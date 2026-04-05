@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '../components/Modal';
+import Modal from '../../components/Modal';
 import { apiCreateUser, apiUpdateUser, apiListUniversities } from '../api/api';
 import { User, University } from '../types';
 import { useAuthStore } from '../store/authStore';
