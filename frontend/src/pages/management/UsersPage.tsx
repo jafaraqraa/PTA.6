@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { apiListUsers, apiCreateUser, apiUpdateUser } from '../../api/api';
+import { apiListUsers, apiUpdateUser } from '../../api/api';
 import { User } from '../../types';
 import { Plus, Edit2, Shield, User as UserIcon } from 'lucide-react';
 import clsx from 'clsx';
+import UserModal from './UserModal';
+import { useAuthStore } from '../../store/authStore';
 
 export default function UsersPage() {
+  const { user: currentUser } = useAuthStore();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const data = await apiListUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const data = await apiListUsers();
-        setUsers(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchUsers();
   }, []);
 
@@ -31,13 +38,26 @@ export default function UsersPage() {
     }
   };
 
-  if (loading) return <div className="p-8">Loading users...</div>;
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
+
+  if (loading && users.length === 0) return <div className="p-8">Loading users...</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
-        <button className="btn-primary flex items-center gap-2">
+        <button
+          onClick={handleAdd}
+          className="btn-primary flex items-center gap-2"
+        >
           <Plus size={18} />
           Add User
         </button>
@@ -92,7 +112,10 @@ export default function UsersPage() {
                     >
                       {user.is_active ? 'Archive' : 'Restore'}
                     </button>
-                    <button className="p-1.5 text-slate-400 hover:text-primary-600 rounded-md hover:bg-primary-50">
+                    <button
+                      onClick={() => handleEdit(user)}
+                      className="p-1.5 text-slate-400 hover:text-primary-600 rounded-md hover:bg-primary-50"
+                    >
                       <Edit2 size={16} />
                     </button>
                   </div>
@@ -102,6 +125,13 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchUsers}
+        user={selectedUser}
+      />
     </div>
   );
 }

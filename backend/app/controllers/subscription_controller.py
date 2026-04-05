@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services.subscription_service import SubscriptionService
 from app.services.security_utils import get_current_user, check_role
-from app.schemas.subscription_schema import SubscriptionDTO, SubscriptionCreate
+from app.schemas.subscription_schema import SubscriptionDTO, SubscriptionCreate, SubscriptionUpdate
 from app.models.enums import UserRoleEnum
 from typing import List
 
@@ -23,3 +23,12 @@ async def create_subscription(
     current_user = Depends(check_role([UserRoleEnum.SUPER_ADMIN]))
 ):
     return await SubscriptionService.create_subscription(db, sub_data.model_dump())
+
+@router.put("/{subscription_id}", response_model=SubscriptionDTO)
+async def update_subscription(
+    subscription_id: int,
+    sub_data: SubscriptionUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(check_role([UserRoleEnum.SUPER_ADMIN]))
+):
+    return await SubscriptionService.update_subscription(db, subscription_id, sub_data.model_dump(exclude_unset=True))

@@ -13,6 +13,14 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    role: Optional[UserRoleEnum] = None
+    university_id: Optional[int] = None
+    is_active: Optional[bool] = None
+    password: Optional[str] = None
+
 class UserDTO(UserBase):
     id: int
     created_at: datetime
