@@ -14,9 +14,17 @@ export function detectDomain(): string | null {
   const host = window.location.hostname;
   const parts = host.split('.');
 
-  // Localhost case (e.g., najah.localhost)
-  if (parts.length >= 2 && parts[parts.length - 1] === 'localhost') {
-    return parts[0];
+  // Localhost case (e.g., najah.localhost, localhost)
+  if (parts.includes('localhost')) {
+    const idx = parts.indexOf('localhost');
+    if (idx > 0) return parts[idx - 1];
+    return null;
+  }
+
+  // IP addresses or local hostnames (e.g., 127.0.0.1, dev-machine)
+  const isIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(host);
+  if (isIP || parts.length === 1) {
+    return null;
   }
 
   // Standard domain case (e.g., najah.pta-sim.com)
@@ -25,4 +33,19 @@ export function detectDomain(): string | null {
   }
 
   return null;
+}
+
+/**
+ * Extracts the university name/domain from an email address.
+ * e.g., admin@najah.com -> najah
+ */
+export function extractDomainFromEmail(email: string): string | null {
+  const parts = email.split('@');
+  if (parts.length !== 2) return null;
+
+  const domainParts = parts[1].split('.');
+  if (domainParts.length < 2) return null;
+
+  // Return the first part of the domain (e.g., 'najah' from 'najah.com')
+  return domainParts[0];
 }

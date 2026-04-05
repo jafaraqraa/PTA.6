@@ -1,8 +1,9 @@
 
 > pta-simulator-frontend@0.1.0 dev
-> vite --host 127.0.0.1 --port 5173
+> vite --port 5173
 
 
-  VITE v5.4.21  ready in 283 ms
+  VITE v5.4.21  ready in 288 ms
 
-  ➜  Local:   http://127.0.0.1:5173/
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose

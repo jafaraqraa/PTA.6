@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { apiLogin } from '../api/api';
-import { detectDomain } from '../utils/domain';
+import { detectDomain, extractDomainFromEmail } from '../utils/domain';
 import { decodeToken } from '../utils/jwt';
 import { Activity, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import type { User, UserRole, University } from '../types';
@@ -31,8 +31,26 @@ export default function Login() {
     setError(null);
 
     try {
+      let finalDomain = domain;
+
+      // Fallback: If no domain from URL, try to infer it from the email
+      if (!finalDomain) {
+        finalDomain = extractDomainFromEmail(email);
+      }
+
+      // If it's a system admin email, they can log in via any domain
+      if (email === 'admin@system.com') {
+        finalDomain = 'system';
+      }
+
+      if (!finalDomain) {
+        throw new Error('Please enter a valid university email to detect your domain.');
+      }
+
+      // Update state if we inferred a domain
       if (!domain) {
-        throw new Error('No university domain detected. Please use a university-specific URL.');
+        setDomain(finalDomain);
+        setStoredDomain(finalDomain);
       }
 
       const { access_token } = await apiLogin({ email, password });
@@ -79,7 +97,7 @@ export default function Login() {
             {domain ? (
               <>Sign in to your <span className="font-semibold text-primary-600 uppercase">{domain}</span> account</>
             ) : (
-              'University domain detection failed'
+              'Enter your university email to sign in'
             )}
           </p>
         </div>
@@ -140,7 +158,7 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={isLoading || !domain}
+            disabled={isLoading}
             className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all shadow-lg shadow-primary-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (

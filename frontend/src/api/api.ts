@@ -26,6 +26,9 @@ async function request(path: string, options: RequestInit = {}): Promise<Respons
   }
 
   const headers = new Headers(options.headers || {});
+  if (domain) {
+    headers.set('X-University-Domain', domain);
+  }
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
