@@ -19,50 +19,15 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def _drop_attempt_fk_if_exists() -> None:
-    bind = op.get_bind()
-    inspector = inspect(bind)
-    foreign_keys = inspector.get_foreign_keys("stored_thresholds")
-    for fk in foreign_keys:
-        constrained = fk.get("constrained_columns") or []
-        name = fk.get("name")
-        referred_table = fk.get("referred_table")
-        if constrained == ["attempt_id"] and referred_table == "attempts" and name:
-            op.drop_constraint(name, "stored_thresholds", type_="foreignkey")
-            break
-
-
 def upgrade() -> None:
-    _drop_attempt_fk_if_exists()
-    op.alter_column(
-        "stored_thresholds",
-        "attempt_id",
-        existing_type=sa.Integer(),
-        nullable=True,
-    )
-    op.create_foreign_key(
-        "fk_stored_thresholds_attempt_id_attempts",
-        "stored_thresholds",
-        "attempts",
-        ["attempt_id"],
-        ["id"],
-        ondelete="SET NULL",
-    )
+    with op.batch_alter_table('stored_thresholds', schema=None) as batch_op:
+        batch_op.alter_column('attempt_id', existing_type=sa.Integer(), nullable=True)
+        batch_op.drop_constraint('fk_stored_thresholds_attempt_id_attempts', type_='foreignkey')
+        batch_op.create_foreign_key('fk_stored_thresholds_attempt_id_attempts_v2', 'attempts', ['attempt_id'], ['id'], ondelete='SET NULL')
 
 
 def downgrade() -> None:
-    _drop_attempt_fk_if_exists()
-    op.alter_column(
-        "stored_thresholds",
-        "attempt_id",
-        existing_type=sa.Integer(),
-        nullable=False,
-    )
-    op.create_foreign_key(
-        "fk_stored_thresholds_attempt_id_attempts",
-        "stored_thresholds",
-        "attempts",
-        ["attempt_id"],
-        ["id"],
-        ondelete="CASCADE",
-    )
+    with op.batch_alter_table('stored_thresholds', schema=None) as batch_op:
+        batch_op.alter_column('attempt_id', existing_type=sa.Integer(), nullable=False)
+        batch_op.drop_constraint('fk_stored_thresholds_attempt_id_attempts_v2', type_='foreignkey')
+        batch_op.create_foreign_key('fk_stored_thresholds_attempt_id_attempts', 'attempts', ['attempt_id'], ['id'], ondelete='CASCADE')

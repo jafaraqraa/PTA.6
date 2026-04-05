@@ -8,7 +8,8 @@ import {
   Activity,
   BarChart3,
   UserCircle,
-  Play
+  Play,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import clsx from 'clsx';
@@ -97,6 +98,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-
-// Add ShieldCheck to the imports
-import { ShieldCheck } from 'lucide-react';
