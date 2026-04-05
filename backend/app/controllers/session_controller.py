@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services.session_manager import SessionManager
+from app.services.security_utils import get_current_user, get_current_university, enforce_multi_tenancy, check_role
+from app.models.enums import UserRoleEnum
 from app.schemas.attempt_schema import AttemptCreateDTO
 from app.schemas.stored_threshold_schema import CreateStoredThresholdDTO
 from app.schemas.final_interpretation_schema import EndSessionDTO
@@ -9,10 +11,15 @@ from app.schemas.final_interpretation_schema import EndSessionDTO
 router = APIRouter()
 
 @router.post("/startSession")
-async def start_session(user_id: int, db: AsyncSession = Depends(get_db)):
+async def start_session(
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user),
+    current_university = Depends(get_current_university)
+):
+    enforce_multi_tenancy(current_user, current_university.id)
 
     try:
-        session = await SessionManager.start_session(db, user_id)
+        session = await SessionManager.start_session(db, current_user.id)
         return session
     except ValueError as exc:
         raise HTTPException(
@@ -27,8 +34,13 @@ async def start_session(user_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/playTone")
-async def play_tone(dto: AttemptCreateDTO, db: AsyncSession = Depends(get_db)):
-
+async def play_tone(
+    dto: AttemptCreateDTO,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user),
+    current_university = Depends(get_current_university)
+):
+    enforce_multi_tenancy(current_user, current_university.id)
     try:
         result = await SessionManager.play_tone(
             db,
@@ -48,8 +60,13 @@ async def play_tone(dto: AttemptCreateDTO, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/storeTone")
-async def store_tone(dto: CreateStoredThresholdDTO, db: AsyncSession = Depends(get_db)):
-    
+async def store_tone(
+    dto: CreateStoredThresholdDTO,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user),
+    current_university = Depends(get_current_university)
+):
+    enforce_multi_tenancy(current_user, current_university.id)
     try:
         threshold = await SessionManager.store_threshold(db, dto)
         return {
@@ -68,7 +85,13 @@ async def store_tone(dto: CreateStoredThresholdDTO, db: AsyncSession = Depends(g
         ) from exc
 
 @router.post("/endSession")
-async def end_session(dto: EndSessionDTO, db: AsyncSession = Depends(get_db)):
+async def end_session(
+    dto: EndSessionDTO,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user),
+    current_university = Depends(get_current_university)
+):
+    enforce_multi_tenancy(current_user, current_university.id)
     try:
         results = await SessionManager.end_session(
             db,
