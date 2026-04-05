@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
-import { apiCreateUniversity, apiUpdateUniversity } from '../api/api';
-import { University } from '../types';
+import { apiCreateUniversity, apiUpdateUniversity } from '../../api/api';
+import { University } from '../../types';
 
 interface UniversityModalProps {
   isOpen: boolean;

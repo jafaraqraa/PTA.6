@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
-import { apiCreateSubscription, apiUpdateSubscription, apiListUniversities } from '../api/api';
-import { University } from '../types';
+import { apiCreateSubscription, apiUpdateSubscription, apiListUniversities } from '../../api/api';
+import { University } from '../../types';
 
 interface SubscriptionModalProps {
   isOpen: boolean;
