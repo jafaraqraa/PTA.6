@@ -6,7 +6,7 @@ from app.services.user_service import UserService
 from app.services.university_service import UniversityService
 from app.services.subscription_service import SubscriptionService
 from app.schemas.auth_schema import LoginRequest, Token
-from app.services.security_utils import get_current_university
+from app.services.security_utils import get_current_university, get_domain_from_request
 from app.models.enums import UserRoleEnum
 
 router = APIRouter()
@@ -18,19 +18,31 @@ async def login(
     db: AsyncSession = Depends(get_db)
 ):
     # 1) Extract domain and get university
-    host = request.headers.get("host", "")
-    # Robustly handle host with port (e.g. najah.localhost:8000)
-    host_parts = host.split(":")[0].split(".")
+    domain = get_domain_from_request(request)
 
-    # If the first part is 'localhost' or an IP, it's not a subdomain
-    if host_parts[0] in ["localhost", "127", ""] or host_parts[0].isdigit():
-        domain = request.query_params.get("domain")
-        # Special case: allow extracting from custom header if frontend sends it
-        if not domain:
-            domain = request.headers.get("X-University-Domain")
-    else:
-        domain = host_parts[0]
+    # 2) Get user by email
+    user = await UserService.get_user_by_email(db, login_data.email)
 
+    # 3) Check for super admin bypass
+    if user and user.role == UserRoleEnum.SUPER_ADMIN:
+        # Verify password
+        if not AuthService.verify_password(login_data.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password",
+            )
+
+        # Super admin bypasses all domain/university/subscription checks
+        access_token = AuthService.create_access_token(
+            data={
+                "user_id": user.id,
+                "role": user.role,
+                "university_id": None
+            }
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+
+    # Proceed with normal domain validation for non-super-admins
     if not domain:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -43,9 +55,6 @@ async def login(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"University with domain '{domain}' not found"
         )
-
-    # 2) Get user by email
-    user = await UserService.get_user_by_email(db, login_data.email)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
