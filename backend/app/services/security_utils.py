@@ -13,11 +13,17 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 async def get_current_university(request: Request, db: AsyncSession = Depends(get_db)):
     host = request.headers.get("host", "")
-    domain = host.split(":")[0].split(".")[0]
+    # Robustly handle host with port (e.g. najah.localhost:8000)
+    host_parts = host.split(":")[0].split(".")
 
-    # Fallback to query param for testing
-    if domain in ["localhost", "127", ""]:
+    # If the first part is 'localhost' or an IP, it's not a subdomain
+    if host_parts[0] in ["localhost", "127", ""] or host_parts[0].isdigit():
         domain = request.query_params.get("domain")
+        # Special case: allow extracting from custom header if frontend sends it
+        if not domain:
+            domain = request.headers.get("X-University-Domain")
+    else:
+        domain = host_parts[0]
 
     if not domain:
         raise HTTPException(
