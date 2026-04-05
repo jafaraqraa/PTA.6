@@ -1,0 +1,36 @@
+{
+    "source_type": "real",
+    "image_ref": "1-a.jpeg",
+    "ears": [
+      {
+        "side": "right",
+        "audiogram_points": [
+          { "test_type": "AC", "frequency": 250, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "AC", "frequency": 500, "threshold_db": 5, "is_no_response": false },
+          { "test_type": "AC", "frequency": 1000, "threshold_db": 5, "is_no_response": false },
+          { "test_type": "AC", "frequency": 2000, "threshold_db": 10, "is_no_response": false },
+          { "test_type": "AC", "frequency": 4000, "threshold_db": 15, "is_no_response": false },
+          { "test_type": "AC", "frequency": 8000, "threshold_db": 10, "is_no_response": false },
+          { "test_type": "BC", "frequency": 500, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 1000, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 2000, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 4000, "threshold_db": 5, "is_no_response": false }
+        ]
+      },
+      {
+        "side": "left",
+        "audiogram_points": [
+          { "test_type": "AC", "frequency": 250, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "AC", "frequency": 500, "threshold_db": 5, "is_no_response": false },
+          { "test_type": "AC", "frequency": 1000, "threshold_db": 5, "is_no_response": false },
+          { "test_type": "AC", "frequency": 2000, "threshold_db": 10, "is_no_response": false },
+          { "test_type": "AC", "frequency": 4000, "threshold_db": 15, "is_no_response": false },
+          { "test_type": "AC", "frequency": 8000, "threshold_db": 5, "is_no_response": false },
+          { "test_type": "BC", "frequency": 500, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 1000, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 2000, "threshold_db": 0, "is_no_response": false },
+          { "test_type": "BC", "frequency": 4000, "threshold_db": 5, "is_no_response": false }
+        ]
+      }
+    ]
+  }

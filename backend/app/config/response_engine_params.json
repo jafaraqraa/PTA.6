@@ -1,0 +1,26 @@
+{
+  "sigma_db": {
+    "min": 0.8,
+    "max": 1.2
+  },
+  "clinical_offset_db": {
+    "min": 2.0,
+    "max": 2.5
+  },
+  "lapse_rate": {
+    "min": 0.01,
+    "max": 0.03
+  },
+  "guess_rate": {
+    "min": 0.01,
+    "max": 0.03
+  },
+  "fatigue_rate": {
+    "min": 0.0005,
+    "max": 0.0015
+  },
+  "boredom_rate": {
+    "min": 0.01,
+    "max": 0.02
+  }
+}
