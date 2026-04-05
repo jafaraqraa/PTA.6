@@ -10,6 +10,10 @@ class SubscriptionBase(BaseModel):
 class SubscriptionCreate(SubscriptionBase):
     pass
 
+class SubscriptionUpdate(BaseModel):
+    is_active: Optional[bool] = None
+    expires_at: Optional[datetime] = None
+
 class SubscriptionDTO(SubscriptionBase):
     id: int
 

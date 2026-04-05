@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services.university_service import UniversityService
 from app.services.security_utils import get_current_user, check_role
-from app.schemas.university_schema import UniversityDTO, UniversityCreate
+from app.schemas.university_schema import UniversityDTO, UniversityCreate, UniversityUpdate
 from app.models.enums import UserRoleEnum
 from typing import List
 
@@ -23,6 +23,15 @@ async def create_university(
     current_user = Depends(check_role([UserRoleEnum.SUPER_ADMIN]))
 ):
     return await UniversityService.create_university(db, university_data.model_dump())
+
+@router.put("/{university_id}", response_model=UniversityDTO)
+async def update_university(
+    university_id: int,
+    university_data: UniversityUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(check_role([UserRoleEnum.SUPER_ADMIN]))
+):
+    return await UniversityService.update_university(db, university_id, university_data.model_dump(exclude_unset=True))
 
 @router.get("/{university_id}", response_model=UniversityDTO)
 async def get_university(

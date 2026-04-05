@@ -86,6 +86,14 @@ export async function apiLogin(dto: LoginRequest): Promise<Token> {
   return res.json();
 }
 
+export async function apiUpdateUniversity(id: number, dto: Partial<University>): Promise<University> {
+  const res = await request(`/universities/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
 // ─────────────────────────────────────────────────────────────
 //  Analytics API
 // ─────────────────────────────────────────────────────────────
@@ -107,6 +115,14 @@ export async function apiListUsers(): Promise<User[]> {
 export async function apiCreateUser(dto: Partial<User> & { password?: string }): Promise<User> {
   const res = await request('/users/', {
     method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+export async function apiUpdateSubscription(id: number, dto: any): Promise<any> {
+  const res = await request(`/subscriptions/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(dto),
   });
   return res.json();

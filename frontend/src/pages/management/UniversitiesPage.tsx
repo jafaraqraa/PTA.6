@@ -1,27 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { apiListUniversities, apiCreateUniversity } from '../../api/api';
+import { apiListUniversities } from '../../api/api';
 import { University } from '../../types';
 import { Plus, School, Globe, Edit2 } from 'lucide-react';
+import UniversityModal from './UniversityModal';
 
 export default function UniversitiesPage() {
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null);
+
+  const fetchUniversities = async () => {
+    setLoading(true);
+    try {
+      const data = await apiListUniversities();
+      setUniversities(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchUniversities() {
-      try {
-        const data = await apiListUniversities();
-        setUniversities(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchUniversities();
   }, []);
 
-  if (loading) return <div className="p-8 text-slate-500 font-bold uppercase tracking-widest text-xs">Syncing Universities...</div>;
+  const handleEdit = (uni: University) => {
+    setSelectedUniversity(uni);
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedUniversity(null);
+    setIsModalOpen(true);
+  };
+
+  if (loading && universities.length === 0) return <div className="p-8 text-slate-500 font-bold uppercase tracking-widest text-xs">Syncing Universities...</div>;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -30,7 +45,10 @@ export default function UniversitiesPage() {
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Universities</h1>
           <p className="text-slate-500 font-medium">Manage institutional tenants and their domains.</p>
         </div>
-        <button className="btn-primary py-3 px-6 rounded-xl flex items-center gap-2 group">
+        <button
+          onClick={handleAdd}
+          className="btn-primary py-3 px-6 rounded-xl flex items-center gap-2 group"
+        >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Add University
         </button>
@@ -43,7 +61,10 @@ export default function UniversitiesPage() {
               <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <School size={24} />
               </div>
-              <button className="p-2 text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+              <button
+                onClick={() => handleEdit(uni)}
+                className="p-2 text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+              >
                 <Edit2 size={18} />
               </button>
             </div>
@@ -66,6 +87,13 @@ export default function UniversitiesPage() {
           </div>
         ))}
       </div>
+
+      <UniversityModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchUniversities}
+        university={selectedUniversity}
+      />
     </div>
   );
 }

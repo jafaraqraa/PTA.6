@@ -1,33 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { apiListSubscriptions, apiCreateSubscription } from '../../api/api';
+import { apiListSubscriptions } from '../../api/api';
 import { Plus, CreditCard, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import clsx from 'clsx';
+import SubscriptionModal from './SubscriptionModal';
 
 export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState<any | null>(null);
+
+  const fetchSubscriptions = async () => {
+    setLoading(true);
+    try {
+      const data = await apiListSubscriptions();
+      setSubscriptions(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchSubscriptions() {
-      try {
-        const data = await apiListSubscriptions();
-        setSubscriptions(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchSubscriptions();
   }, []);
 
-  if (loading) return <div className="p-8">Syncing Subscriptions...</div>;
+  const handleEdit = (sub: any) => {
+    setSelectedSubscription(sub);
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedSubscription(null);
+    setIsModalOpen(true);
+  };
+
+  if (loading && subscriptions.length === 0) return <div className="p-8">Syncing Subscriptions...</div>;
 
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">University Subscriptions</h1>
-        <button className="btn-primary py-3 px-6 rounded-xl flex items-center gap-2 group">
+        <button
+          onClick={handleAdd}
+          className="btn-primary py-3 px-6 rounded-xl flex items-center gap-2 group"
+        >
           <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
           Add Subscription
         </button>
@@ -66,7 +84,10 @@ export default function SubscriptionsPage() {
                   {sub.expires_at ? new Date(sub.expires_at).toLocaleDateString() : 'Never'}
                 </td>
                 <td className="px-6 py-4 text-right">
-                   <button className="p-1.5 text-slate-400 hover:text-primary-600 rounded-md hover:bg-primary-50 font-bold text-xs uppercase tracking-widest">
+                   <button
+                    onClick={() => handleEdit(sub)}
+                    className="p-1.5 text-slate-400 hover:text-primary-600 rounded-md hover:bg-primary-50 font-bold text-xs uppercase tracking-widest"
+                   >
                       Modify
                     </button>
                 </td>
@@ -75,6 +96,13 @@ export default function SubscriptionsPage() {
           </tbody>
         </table>
       </div>
+
+      <SubscriptionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchSubscriptions}
+        subscription={selectedSubscription}
+      />
     </div>
   );
 }
