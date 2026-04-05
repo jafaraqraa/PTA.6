@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 async def get_current_university(request: Request, db: AsyncSession = Depends(get_db)):
     host = request.headers.get("host", "")
-    domain = host.split(".")[0]
+    domain = host.split(":")[0].split(".")[0]
 
     # Fallback to query param for testing
     if domain in ["localhost", "127", ""]:

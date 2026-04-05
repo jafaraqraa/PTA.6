@@ -200,3 +200,34 @@ export interface RecentSession {
   duration: string;
   completed: boolean;
 }
+
+// ============================================================
+//  Authentication & User
+// ============================================================
+export type UserRole = 'super_admin' | 'university_admin' | 'lab_admin' | 'student';
+
+export interface User {
+  id: number;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  university_id: number | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface University {
+  id: number;
+  name: string;
+  domain: string;
+}
+
+export interface Token {
+  access_token: string;
+  token_type: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}

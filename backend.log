@@ -1,0 +1,202 @@
+INFO:     Started server process [1066296]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50412 - "OPTIONS /auth/login?domain=najah HTTP/1.1" 200 OK
+2026-04-05 15:00:38,049 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:38,087 INFO sqlalchemy.engine.Engine SELECT universities.id, universities.name, universities.domain
+FROM universities
+WHERE universities.domain = ?
+2026-04-05 15:00:38,087 INFO sqlalchemy.engine.Engine [generated in 0.00036s] ('najah',)
+2026-04-05 15:00:38,092 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.full_name, users.role, users.university_id, users.is_active, users.created_at
+FROM users
+WHERE users.email = ?
+2026-04-05 15:00:38,092 INFO sqlalchemy.engine.Engine [generated in 0.00029s] ('student@najah.com',)
+2026-04-05 15:00:38,458 INFO sqlalchemy.engine.Engine SELECT subscriptions.id, subscriptions.university_id, subscriptions.is_active, subscriptions.expires_at
+FROM subscriptions
+WHERE subscriptions.university_id = ? AND subscriptions.is_active = 1 AND (subscriptions.expires_at IS NULL OR subscriptions.expires_at > ?)
+2026-04-05 15:00:38,458 INFO sqlalchemy.engine.Engine [generated in 0.00032s] (1, '2026-04-05 15:00:38.455385')
+INFO:     127.0.0.1:50424 - "POST /auth/login?domain=najah HTTP/1.1" 200 OK
+2026-04-05 15:00:38,469 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50424 - "OPTIONS /sessions/startSession?domain=najah HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41790 - "OPTIONS /sessions/startSession?domain=najah HTTP/1.1" 200 OK
+2026-04-05 15:00:43,418 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,420 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.full_name, users.role, users.university_id, users.is_active, users.created_at
+FROM users
+WHERE users.id = ?
+2026-04-05 15:00:43,420 INFO sqlalchemy.engine.Engine [generated in 0.00071s] (4,)
+2026-04-05 15:00:43,424 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,425 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.full_name, users.role, users.university_id, users.is_active, users.created_at
+FROM users
+WHERE users.id = ?
+2026-04-05 15:00:43,425 INFO sqlalchemy.engine.Engine [cached since 0.005754s ago] (4,)
+2026-04-05 15:00:43,427 INFO sqlalchemy.engine.Engine SELECT universities.id, universities.name, universities.domain
+FROM universities
+WHERE universities.domain = ?
+2026-04-05 15:00:43,427 INFO sqlalchemy.engine.Engine [cached since 5.34s ago] ('najah',)
+2026-04-05 15:00:43,430 INFO sqlalchemy.engine.Engine SELECT universities.id, universities.name, universities.domain
+FROM universities
+WHERE universities.domain = ?
+2026-04-05 15:00:43,430 INFO sqlalchemy.engine.Engine [cached since 5.343s ago] ('najah',)
+2026-04-05 15:00:43,434 INFO sqlalchemy.engine.Engine SELECT patients.id, patients.source_type, patients.image_ref
+FROM patients
+2026-04-05 15:00:43,434 INFO sqlalchemy.engine.Engine [generated in 0.00030s] ()
+2026-04-05 15:00:43,436 INFO sqlalchemy.engine.Engine SELECT patients.id, patients.source_type, patients.image_ref
+FROM patients
+2026-04-05 15:00:43,437 INFO sqlalchemy.engine.Engine [cached since 0.002703s ago] ()
+2026-04-05 15:00:43,442 INFO sqlalchemy.engine.Engine SELECT ears.patient_id AS ears_patient_id, ears.id AS ears_id, ears.side AS ears_side, ears.hearing_type AS ears_hearing_type, ears.hearing_profile AS ears_hearing_profile, ears.hearing_tags AS ears_hearing_tags
+FROM ears
+WHERE ears.patient_id IN (?, ?)
+2026-04-05 15:00:43,442 INFO sqlalchemy.engine.Engine [generated in 0.00044s] (1, 2)
+2026-04-05 15:00:43,445 INFO sqlalchemy.engine.Engine SELECT ears.patient_id AS ears_patient_id, ears.id AS ears_id, ears.side AS ears_side, ears.hearing_type AS ears_hearing_type, ears.hearing_profile AS ears_hearing_profile, ears.hearing_tags AS ears_hearing_tags
+FROM ears
+WHERE ears.patient_id IN (?, ?)
+2026-04-05 15:00:43,445 INFO sqlalchemy.engine.Engine [cached since 0.003158s ago] (1, 2)
+2026-04-05 15:00:43,451 INFO sqlalchemy.engine.Engine SELECT audiogram_points.ear_id AS audiogram_points_ear_id, audiogram_points.id AS audiogram_points_id, audiogram_points.test_type AS audiogram_points_test_type, audiogram_points.frequency AS audiogram_points_frequency, audiogram_points.threshold_db AS audiogram_points_threshold_db, audiogram_points.is_no_response AS audiogram_points_is_no_response
+FROM audiogram_points
+WHERE audiogram_points.ear_id IN (?, ?, ?, ?)
+2026-04-05 15:00:43,452 INFO sqlalchemy.engine.Engine [generated in 0.00034s] (2, 1, 3, 4)
+2026-04-05 15:00:43,455 INFO sqlalchemy.engine.Engine SELECT audiogram_points.ear_id AS audiogram_points_ear_id, audiogram_points.id AS audiogram_points_id, audiogram_points.test_type AS audiogram_points_test_type, audiogram_points.frequency AS audiogram_points_frequency, audiogram_points.threshold_db AS audiogram_points_threshold_db, audiogram_points.is_no_response AS audiogram_points_is_no_response
+FROM audiogram_points
+WHERE audiogram_points.ear_id IN (?, ?, ?, ?)
+2026-04-05 15:00:43,455 INFO sqlalchemy.engine.Engine [cached since 0.003653s ago] (2, 1, 3, 4)
+2026-04-05 15:00:43,463 INFO sqlalchemy.engine.Engine INSERT INTO patients (source_type, image_ref) VALUES (?, ?)
+2026-04-05 15:00:43,463 INFO sqlalchemy.engine.Engine [generated in 0.00028s] ('SYNTHETIC', '1-a.jpeg')
+2026-04-05 15:00:43,468 INFO sqlalchemy.engine.Engine INSERT INTO patients (source_type, image_ref) VALUES (?, ?)
+2026-04-05 15:00:43,469 INFO sqlalchemy.engine.Engine [cached since 0.005911s ago] ('SYNTHETIC', '1-a.jpeg')
+2026-04-05 15:00:43,470 INFO sqlalchemy.engine.Engine INSERT INTO ears (patient_id, side, hearing_type, hearing_profile, hearing_tags) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,471 INFO sqlalchemy.engine.Engine [generated in 0.00023s (insertmanyvalues) 1/2 (ordered; batch not supported)] (3, 'LEFT', 'CONDUCTIVE', '{"500": "Normal", "1000": "Normal", "2000": "Conductive", "4000": "Conductive"}', '[]')
+2026-04-05 15:00:43,471 INFO sqlalchemy.engine.Engine INSERT INTO ears (patient_id, side, hearing_type, hearing_profile, hearing_tags) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,471 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/2 (ordered; batch not supported)] (3, 'RIGHT', 'CONDUCTIVE', '{"500": "Normal", "1000": "Normal", "2000": "Conductive", "4000": "Conductive"}', '[]')
+2026-04-05 15:00:43,475 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,475 INFO sqlalchemy.engine.Engine [generated in 0.00026s (insertmanyvalues) 1/20 (ordered; batch not supported)] (5, 'AC', 250, 0.0, 0)
+2026-04-05 15:00:43,476 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,476 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/20 (ordered; batch not supported)] (5, 'AC', 500, 5.0, 0)
+2026-04-05 15:00:43,476 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,476 INFO sqlalchemy.engine.Engine [insertmanyvalues 3/20 (ordered; batch not supported)] (5, 'AC', 1000, 5.0, 0)
+2026-04-05 15:00:43,477 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,477 INFO sqlalchemy.engine.Engine [insertmanyvalues 4/20 (ordered; batch not supported)] (5, 'AC', 2000, 10.0, 0)
+2026-04-05 15:00:43,477 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,477 INFO sqlalchemy.engine.Engine [insertmanyvalues 5/20 (ordered; batch not supported)] (5, 'AC', 4000, 15.0, 0)
+2026-04-05 15:00:43,478 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,478 INFO sqlalchemy.engine.Engine [insertmanyvalues 6/20 (ordered; batch not supported)] (5, 'AC', 8000, 5.0, 0)
+2026-04-05 15:00:43,478 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,478 INFO sqlalchemy.engine.Engine [insertmanyvalues 7/20 (ordered; batch not supported)] (5, 'BC', 500, 0.0, 0)
+2026-04-05 15:00:43,479 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,479 INFO sqlalchemy.engine.Engine [insertmanyvalues 8/20 (ordered; batch not supported)] (5, 'BC', 1000, 0.0, 0)
+2026-04-05 15:00:43,479 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,480 INFO sqlalchemy.engine.Engine [insertmanyvalues 9/20 (ordered; batch not supported)] (5, 'BC', 2000, 0.0, 0)
+2026-04-05 15:00:43,480 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,480 INFO sqlalchemy.engine.Engine [insertmanyvalues 10/20 (ordered; batch not supported)] (5, 'BC', 4000, 5.0, 0)
+2026-04-05 15:00:43,481 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,481 INFO sqlalchemy.engine.Engine [insertmanyvalues 11/20 (ordered; batch not supported)] (6, 'AC', 250, 0.0, 0)
+2026-04-05 15:00:43,481 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,481 INFO sqlalchemy.engine.Engine [insertmanyvalues 12/20 (ordered; batch not supported)] (6, 'AC', 500, 5.0, 0)
+2026-04-05 15:00:43,482 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,482 INFO sqlalchemy.engine.Engine [insertmanyvalues 13/20 (ordered; batch not supported)] (6, 'AC', 1000, 5.0, 0)
+2026-04-05 15:00:43,483 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,483 INFO sqlalchemy.engine.Engine [insertmanyvalues 14/20 (ordered; batch not supported)] (6, 'AC', 2000, 10.0, 0)
+2026-04-05 15:00:43,483 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,483 INFO sqlalchemy.engine.Engine [insertmanyvalues 15/20 (ordered; batch not supported)] (6, 'AC', 4000, 15.0, 0)
+2026-04-05 15:00:43,483 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,484 INFO sqlalchemy.engine.Engine [insertmanyvalues 16/20 (ordered; batch not supported)] (6, 'AC', 8000, 10.0, 0)
+2026-04-05 15:00:43,484 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,484 INFO sqlalchemy.engine.Engine [insertmanyvalues 17/20 (ordered; batch not supported)] (6, 'BC', 500, 0.0, 0)
+2026-04-05 15:00:43,484 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,485 INFO sqlalchemy.engine.Engine [insertmanyvalues 18/20 (ordered; batch not supported)] (6, 'BC', 1000, 0.0, 0)
+2026-04-05 15:00:43,485 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,485 INFO sqlalchemy.engine.Engine [insertmanyvalues 19/20 (ordered; batch not supported)] (6, 'BC', 2000, 0.0, 0)
+2026-04-05 15:00:43,485 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,485 INFO sqlalchemy.engine.Engine [insertmanyvalues 20/20 (ordered; batch not supported)] (6, 'BC', 4000, 5.0, 0)
+2026-04-05 15:00:43,487 INFO sqlalchemy.engine.Engine COMMIT
+2026-04-05 15:00:43,496 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,497 INFO sqlalchemy.engine.Engine SELECT patients.id, patients.source_type, patients.image_ref
+FROM patients
+WHERE patients.id = ?
+2026-04-05 15:00:43,497 INFO sqlalchemy.engine.Engine [generated in 0.00022s] (3,)
+2026-04-05 15:00:43,499 INFO sqlalchemy.engine.Engine SELECT ears.patient_id AS ears_patient_id, ears.id AS ears_id, ears.side AS ears_side, ears.hearing_type AS ears_hearing_type, ears.hearing_profile AS ears_hearing_profile, ears.hearing_tags AS ears_hearing_tags
+FROM ears
+WHERE ears.patient_id IN (?)
+2026-04-05 15:00:43,499 INFO sqlalchemy.engine.Engine [cached since 0.05714s ago] (3,)
+2026-04-05 15:00:43,501 INFO sqlalchemy.engine.Engine SELECT audiogram_points.ear_id AS audiogram_points_ear_id, audiogram_points.id AS audiogram_points_id, audiogram_points.test_type AS audiogram_points_test_type, audiogram_points.frequency AS audiogram_points_frequency, audiogram_points.threshold_db AS audiogram_points_threshold_db, audiogram_points.is_no_response AS audiogram_points_is_no_response
+FROM audiogram_points
+WHERE audiogram_points.ear_id IN (?, ?)
+2026-04-05 15:00:43,501 INFO sqlalchemy.engine.Engine [cached since 0.04953s ago] (5, 6)
+2026-04-05 15:00:43,506 INFO sqlalchemy.engine.Engine INSERT INTO sessions (user_id, start_time, end_time, patient_id) VALUES (?, ?, ?, ?)
+2026-04-05 15:00:43,507 INFO sqlalchemy.engine.Engine [generated in 0.00156s] (4, '2026-04-05 15:00:43.506126', None, 3)
+2026-04-05 15:00:43,509 INFO sqlalchemy.engine.Engine INSERT INTO ears (patient_id, side, hearing_type, hearing_profile, hearing_tags) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,509 INFO sqlalchemy.engine.Engine [cached since 0.03873s ago (insertmanyvalues) 1/2 (ordered; batch not supported)] (4, 'LEFT', 'CONDUCTIVE', '{"500": "Normal", "1000": "Normal", "2000": "Conductive", "4000": "Conductive"}', '[]')
+2026-04-05 15:00:43,510 INFO sqlalchemy.engine.Engine INSERT INTO ears (patient_id, side, hearing_type, hearing_profile, hearing_tags) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,510 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/2 (ordered; batch not supported)] (4, 'RIGHT', 'CONDUCTIVE', '{"500": "Normal", "1000": "Normal", "2000": "Conductive", "4000": "Conductive"}', '[]')
+2026-04-05 15:00:43,513 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,513 INFO sqlalchemy.engine.Engine [cached since 0.03805s ago (insertmanyvalues) 1/20 (ordered; batch not supported)] (7, 'AC', 250, 0.0, 0)
+2026-04-05 15:00:43,513 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,514 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/20 (ordered; batch not supported)] (7, 'AC', 500, 5.0, 0)
+2026-04-05 15:00:43,514 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,514 INFO sqlalchemy.engine.Engine [insertmanyvalues 3/20 (ordered; batch not supported)] (7, 'AC', 1000, 5.0, 0)
+2026-04-05 15:00:43,515 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,515 INFO sqlalchemy.engine.Engine [insertmanyvalues 4/20 (ordered; batch not supported)] (7, 'AC', 2000, 10.0, 0)
+2026-04-05 15:00:43,515 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,515 INFO sqlalchemy.engine.Engine [insertmanyvalues 5/20 (ordered; batch not supported)] (7, 'AC', 4000, 15.0, 0)
+2026-04-05 15:00:43,516 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,516 INFO sqlalchemy.engine.Engine [insertmanyvalues 6/20 (ordered; batch not supported)] (7, 'AC', 8000, 5.0, 0)
+2026-04-05 15:00:43,516 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,516 INFO sqlalchemy.engine.Engine [insertmanyvalues 7/20 (ordered; batch not supported)] (7, 'BC', 500, 0.0, 0)
+2026-04-05 15:00:43,517 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,517 INFO sqlalchemy.engine.Engine [insertmanyvalues 8/20 (ordered; batch not supported)] (7, 'BC', 1000, 0.0, 0)
+2026-04-05 15:00:43,517 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,518 INFO sqlalchemy.engine.Engine [insertmanyvalues 9/20 (ordered; batch not supported)] (7, 'BC', 2000, 0.0, 0)
+2026-04-05 15:00:43,518 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,518 INFO sqlalchemy.engine.Engine [insertmanyvalues 10/20 (ordered; batch not supported)] (7, 'BC', 4000, 5.0, 0)
+2026-04-05 15:00:43,519 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,519 INFO sqlalchemy.engine.Engine [insertmanyvalues 11/20 (ordered; batch not supported)] (8, 'AC', 250, 0.0, 0)
+2026-04-05 15:00:43,519 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,519 INFO sqlalchemy.engine.Engine [insertmanyvalues 12/20 (ordered; batch not supported)] (8, 'AC', 500, 5.0, 0)
+2026-04-05 15:00:43,519 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,520 INFO sqlalchemy.engine.Engine [insertmanyvalues 13/20 (ordered; batch not supported)] (8, 'AC', 1000, 5.0, 0)
+2026-04-05 15:00:43,520 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,520 INFO sqlalchemy.engine.Engine [insertmanyvalues 14/20 (ordered; batch not supported)] (8, 'AC', 2000, 10.0, 0)
+2026-04-05 15:00:43,521 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,521 INFO sqlalchemy.engine.Engine [insertmanyvalues 15/20 (ordered; batch not supported)] (8, 'AC', 4000, 15.0, 0)
+2026-04-05 15:00:43,521 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,521 INFO sqlalchemy.engine.Engine [insertmanyvalues 16/20 (ordered; batch not supported)] (8, 'AC', 8000, 10.0, 0)
+2026-04-05 15:00:43,522 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,522 INFO sqlalchemy.engine.Engine [insertmanyvalues 17/20 (ordered; batch not supported)] (8, 'BC', 500, 0.0, 0)
+2026-04-05 15:00:43,522 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,523 INFO sqlalchemy.engine.Engine [insertmanyvalues 18/20 (ordered; batch not supported)] (8, 'BC', 1000, 0.0, 0)
+2026-04-05 15:00:43,523 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,523 INFO sqlalchemy.engine.Engine [insertmanyvalues 19/20 (ordered; batch not supported)] (8, 'BC', 2000, 0.0, 0)
+2026-04-05 15:00:43,523 INFO sqlalchemy.engine.Engine INSERT INTO audiogram_points (ear_id, test_type, frequency, threshold_db, is_no_response) VALUES (?, ?, ?, ?, ?) RETURNING id
+2026-04-05 15:00:43,523 INFO sqlalchemy.engine.Engine [insertmanyvalues 20/20 (ordered; batch not supported)] (8, 'BC', 4000, 5.0, 0)
+2026-04-05 15:00:43,525 INFO sqlalchemy.engine.Engine COMMIT
+2026-04-05 15:00:43,529 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,529 INFO sqlalchemy.engine.Engine SELECT patients.id, patients.source_type, patients.image_ref
+FROM patients
+WHERE patients.id = ?
+2026-04-05 15:00:43,529 INFO sqlalchemy.engine.Engine [cached since 0.03233s ago] (4,)
+2026-04-05 15:00:43,531 INFO sqlalchemy.engine.Engine SELECT ears.patient_id AS ears_patient_id, ears.id AS ears_id, ears.side AS ears_side, ears.hearing_type AS ears_hearing_type, ears.hearing_profile AS ears_hearing_profile, ears.hearing_tags AS ears_hearing_tags
+FROM ears
+WHERE ears.patient_id IN (?)
+2026-04-05 15:00:43,531 INFO sqlalchemy.engine.Engine [cached since 0.08924s ago] (4,)
+2026-04-05 15:00:43,533 INFO sqlalchemy.engine.Engine SELECT audiogram_points.ear_id AS audiogram_points_ear_id, audiogram_points.id AS audiogram_points_id, audiogram_points.test_type AS audiogram_points_test_type, audiogram_points.frequency AS audiogram_points_frequency, audiogram_points.threshold_db AS audiogram_points_threshold_db, audiogram_points.is_no_response AS audiogram_points_is_no_response
+FROM audiogram_points
+WHERE audiogram_points.ear_id IN (?, ?)
+2026-04-05 15:00:43,533 INFO sqlalchemy.engine.Engine [cached since 0.08212s ago] (7, 8)
+2026-04-05 15:00:43,536 INFO sqlalchemy.engine.Engine INSERT INTO sessions (user_id, start_time, end_time, patient_id) VALUES (?, ?, ?, ?)
+2026-04-05 15:00:43,536 INFO sqlalchemy.engine.Engine [cached since 0.03045s ago] (4, '2026-04-05 15:00:43.536269', None, 4)
+2026-04-05 15:00:43,537 INFO sqlalchemy.engine.Engine COMMIT
+2026-04-05 15:00:43,543 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,545 INFO sqlalchemy.engine.Engine SELECT sessions.id, sessions.user_id, sessions.start_time, sessions.end_time, sessions.patient_id
+FROM sessions
+WHERE sessions.id = ?
+2026-04-05 15:00:43,545 INFO sqlalchemy.engine.Engine [generated in 0.00022s] (2,)
+2026-04-05 15:00:43,546 INFO sqlalchemy.engine.Engine COMMIT
+2026-04-05 15:00:43,549 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-05 15:00:43,550 INFO sqlalchemy.engine.Engine SELECT sessions.id, sessions.user_id, sessions.start_time, sessions.end_time, sessions.patient_id
+FROM sessions
+WHERE sessions.id = ?
+2026-04-05 15:00:43,550 INFO sqlalchemy.engine.Engine [cached since 0.004709s ago] (3,)
+INFO:     127.0.0.1:50424 - "POST /sessions/startSession?domain=najah HTTP/1.1" 200 OK
+2026-04-05 15:00:43,552 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:41802 - "POST /sessions/startSession?domain=najah HTTP/1.1" 200 OK
+2026-04-05 15:00:43,555 INFO sqlalchemy.engine.Engine ROLLBACK

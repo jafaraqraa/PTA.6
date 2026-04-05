@@ -19,7 +19,7 @@ async def login(
 ):
     # 1) Extract domain and get university
     host = request.headers.get("host", "")
-    domain = host.split(".")[0]
+    domain = host.split(":")[0].split(".")[0]
 
     # Fallback to query param
     if domain in ["localhost", "127", ""]:
