@@ -87,6 +87,74 @@ export async function apiLogin(dto: LoginRequest): Promise<Token> {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  Analytics API
+// ─────────────────────────────────────────────────────────────
+
+export async function apiGetDashboardStats(): Promise<any> {
+  const res = await request('/analytics/');
+  return res.json();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  User Management API
+// ─────────────────────────────────────────────────────────────
+
+export async function apiListUsers(): Promise<User[]> {
+  const res = await request('/users/');
+  return res.json();
+}
+
+export async function apiCreateUser(dto: Partial<User> & { password?: string }): Promise<User> {
+  const res = await request('/users/', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+export async function apiUpdateUser(id: number, dto: Partial<User>): Promise<User> {
+  const res = await request(`/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  University Management API
+// ─────────────────────────────────────────────────────────────
+
+export async function apiListUniversities(): Promise<University[]> {
+  const res = await request('/universities/');
+  return res.json();
+}
+
+export async function apiCreateUniversity(dto: Partial<University>): Promise<University> {
+  const res = await request('/universities/', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Subscription Management API
+// ─────────────────────────────────────────────────────────────
+
+export async function apiListSubscriptions(): Promise<any[]> {
+  const res = await request('/subscriptions/');
+  return res.json();
+}
+
+export async function apiCreateSubscription(dto: any): Promise<any> {
+  const res = await request('/subscriptions/', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+// ─────────────────────────────────────────────────────────────
 //  Session API
 // ─────────────────────────────────────────────────────────────
 

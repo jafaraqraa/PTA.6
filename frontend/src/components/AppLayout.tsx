@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import { useAuthStore } from '../store/authStore';
 import { LogOut, User as UserIcon } from 'lucide-react';
 
@@ -34,9 +35,12 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-slate-50/50">
       <Navbar rightContent={rightContent} />
-      <main className="max-w-screen-2xl mx-auto p-4 sm:p-6 lg:p-8">
-        <Outlet />
-      </main>
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 max-w-screen-2xl mx-auto p-4 sm:p-6 lg:p-8">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

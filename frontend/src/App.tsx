@@ -10,6 +10,9 @@ import Unauthorized from './pages/Unauthorized';
 import SubscriptionExpired from './pages/SubscriptionExpired';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/AppLayout';
+import UsersPage from './pages/management/UsersPage';
+import UniversitiesPage from './pages/management/UniversitiesPage';
+import SubscriptionsPage from './pages/management/SubscriptionsPage';
 
 export default function App() {
   return (
@@ -27,6 +30,23 @@ export default function App() {
           <Route path="/session" element={<Session />} />
           <Route path="/interpret" element={<Interpretation />} />
           <Route path="/evaluation" element={<Evaluation />} />
+
+          {/* Management Routes */}
+          <Route path="/users" element={
+            <ProtectedRoute allowedRoles={['super_admin', 'university_admin']}>
+              <UsersPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/universities" element={
+            <ProtectedRoute allowedRoles={['super_admin']}>
+              <UniversitiesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/subscriptions" element={
+            <ProtectedRoute allowedRoles={['super_admin']}>
+              <SubscriptionsPage />
+            </ProtectedRoute>
+          } />
         </Route>
 
         {/* Fallback */}

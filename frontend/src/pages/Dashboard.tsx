@@ -3,7 +3,21 @@ import Navbar from '../components/Navbar';
 import StatCard from '../components/StatCard';
 import { useDashboard } from '../hooks/useDashboard';
 import { useSessionStore } from '../store/sessionStore';
-import { Activity, CheckCircle, Target, Award, Play, ChevronRight, Clock, User, ShieldCheck, ArrowRight } from 'lucide-react';
+import {
+  Activity,
+  CheckCircle,
+  Target,
+  Award,
+  Play,
+  ChevronRight,
+  Clock,
+  User,
+  ShieldCheck,
+  ArrowRight,
+  School,
+  Users,
+  CreditCard
+} from 'lucide-react';
 import clsx from 'clsx';
 
 import { useAuthStore } from '../store/authStore';
@@ -50,12 +64,34 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* ── Stats Grid ── */}
+        {/* ── Stats Grid (Role-Aware) ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard label="Total Sessions" value={stats.totalSessions} icon={<Activity size={24} />} color="indigo" />
-          <StatCard label="Completed Protocols" value={stats.completed} icon={<CheckCircle size={24} />} color="emerald" />
-          <StatCard label="Average Accuracy" value={`${Math.round(stats.avgScore)}%`} icon={<Target size={24} />} color="amber" />
-          <StatCard label="Last Performance" value={`${Math.round(stats.lastScore)}%`} icon={<Award size={24} />} color="cyan" />
+          {user?.role === 'super_admin' && (
+            <>
+              <StatCard label="Total Universities" value={stats.total_universities} icon={<School size={24} />} color="indigo" />
+              <StatCard label="Total Users" value={stats.total_users} icon={<User size={24} />} color="emerald" />
+              <StatCard label="Total Students" value={stats.total_students} icon={<Users size={24} />} color="amber" />
+              <StatCard label="Active Subscriptions" value={stats.active_subscriptions} icon={<CreditCard size={24} />} color="cyan" />
+            </>
+          )}
+
+          {user?.role === 'university_admin' && (
+            <>
+              <StatCard label="Total Students" value={stats.total_students} icon={<Users size={24} />} color="indigo" />
+              <StatCard label="Lab Admins" value={stats.total_lab_admins} icon={<ShieldCheck size={24} />} color="emerald" />
+              <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="amber" />
+              <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="cyan" />
+            </>
+          )}
+
+          {user?.role === 'student' && (
+            <>
+              <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="indigo" />
+              <StatCard label="Completed" value={stats.completed} icon={<CheckCircle size={24} />} color="emerald" />
+              <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="amber" />
+              <StatCard label="Last Score" value={`${stats.last_performance}%`} icon={<Award size={24} />} color="cyan" />
+            </>
+          )}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
