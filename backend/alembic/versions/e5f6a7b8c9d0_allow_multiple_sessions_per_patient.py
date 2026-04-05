@@ -20,21 +20,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    bind = op.get_bind()
-    inspector = inspect(bind)
-    unique_constraints = inspector.get_unique_constraints("sessions")
-
-    for constraint in unique_constraints:
-        columns = constraint.get("column_names") or []
-        name = constraint.get("name")
-        if columns == ["patient_id"] and name:
-            op.drop_constraint(name, "sessions", type_="unique")
-            break
+    with op.batch_alter_table('sessions', schema=None) as batch_op:
+        batch_op.drop_constraint('uq_sessions_patient_id', type_='unique')
 
 
 def downgrade() -> None:
-    op.create_unique_constraint(
-        "uq_sessions_patient_id",
-        "sessions",
-        ["patient_id"],
-    )
+    with op.batch_alter_table('sessions', schema=None) as batch_op:
+        batch_op.create_unique_constraint('uq_sessions_patient_id', ['patient_id'])

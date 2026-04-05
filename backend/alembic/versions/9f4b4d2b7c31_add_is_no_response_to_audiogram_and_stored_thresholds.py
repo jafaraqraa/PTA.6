@@ -19,16 +19,11 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.add_column(
-        "audiogram_points",
-        sa.Column("is_no_response", sa.Boolean(), nullable=False, server_default=sa.false()),
-    )
-    op.add_column(
-        "stored_thresholds",
-        sa.Column("is_no_response", sa.Boolean(), nullable=False, server_default=sa.false()),
-    )
-    op.alter_column("audiogram_points", "is_no_response", server_default=None)
-    op.alter_column("stored_thresholds", "is_no_response", server_default=None)
+    with op.batch_alter_table('audiogram_points', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('is_no_response', sa.Boolean(), nullable=False, server_default=sa.false()))
+
+    with op.batch_alter_table('stored_thresholds', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('is_no_response', sa.Boolean(), nullable=False, server_default=sa.false()))
 
 
 def downgrade() -> None:
