@@ -11,7 +11,7 @@ from app.models.enums import UserRoleEnum
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-async def get_current_university(request: Request, db: AsyncSession = Depends(get_db)):
+def get_domain_from_request(request: Request):
     host = request.headers.get("host", "")
     # Robustly handle host with port (e.g. najah.localhost:8000)
     host_parts = host.split(":")[0].split(".")
@@ -24,6 +24,10 @@ async def get_current_university(request: Request, db: AsyncSession = Depends(ge
             domain = request.headers.get("X-University-Domain")
     else:
         domain = host_parts[0]
+    return domain
+
+async def get_current_university(request: Request, db: AsyncSession = Depends(get_db)):
+    domain = get_domain_from_request(request)
 
     if not domain:
         raise HTTPException(
