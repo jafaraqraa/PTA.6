@@ -12,9 +12,11 @@ export function useDashboard() {
       try {
         const data = await apiGetDashboardStats();
         setStats(data);
-        // Still using mock for sessions as they are user-specific and not yet in analytics API
-        const { MOCK_RECENT_SESSIONS } = await import('../api/mockData');
-        setRecentSessions(MOCK_RECENT_SESSIONS);
+        if (data.recent_sessions) {
+          setRecentSessions(data.recent_sessions);
+        } else {
+          setRecentSessions([]);
+        }
       } catch (err) {
         console.error("Failed to fetch dashboard stats", err);
       } finally {

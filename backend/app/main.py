@@ -22,9 +22,7 @@ async def verify_schema():
             result = await db.execute(text("PRAGMA table_info(universities)"))
             columns = [row[1] for row in result.fetchall()]
             if 'domain' in columns:
-                logging.error("DATABASE SCHEMA MISMATCH: 'domain' column still exists in 'universities' table.")
-                # We don't crash here but log a severe error.
-                # In strict environments, you might sys.exit(1)
+                logging.error("DATABASE SCHEMA MISMATCH: 'domain' column still exists in 'universities' table. Please run migrations.")
         except Exception as e:
             logging.error(f"Failed to verify database schema: {e}")
 

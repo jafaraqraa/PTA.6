@@ -14,7 +14,7 @@ async def check_schema():
             result = await db.execute(text("PRAGMA table_info(universities)"))
             columns = [row[1] for row in result.fetchall()]
             if 'domain' in columns:
-                print("⚠️  CRITICAL: 'domain' column still exists in 'universities' table!")
+                print("⚠️  CRITICAL: 'domain' column still exists in 'universities' table! Run 'alembic upgrade head'")
                 return False
             print("✓ Database schema is consistent with ORM models.")
             return True

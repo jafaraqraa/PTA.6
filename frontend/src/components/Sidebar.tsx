@@ -43,30 +43,6 @@ export default function Sidebar() {
       roles: ['super_admin', 'university_admin']
     },
     {
-      label: 'Lab Admins',
-      to: '/lab-admins',
-      icon: ShieldCheck, // Custom Icon if needed
-      roles: ['university_admin']
-    },
-    {
-      label: 'Students',
-      to: '/students',
-      icon: Users,
-      roles: ['university_admin', 'lab_admin']
-    },
-    {
-      label: 'Sessions',
-      to: '/sessions',
-      icon: Activity,
-      roles: ['university_admin', 'lab_admin', 'student']
-    },
-    {
-      label: 'Reports',
-      to: '/reports',
-      icon: BarChart3,
-      roles: ['university_admin', 'lab_admin']
-    },
-    {
       label: 'Profile',
       to: '/profile',
       icon: UserCircle,
