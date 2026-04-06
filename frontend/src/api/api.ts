@@ -16,9 +16,13 @@ const BASE_URL = 'http://localhost:8000';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || BASE_URL;
 
 async function request(path: string, options: RequestInit = {}): Promise<Response> {
+  // Ensure path starts with /
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const { token } = useAuthStore.getState();
 
-  const url = new URL(`${API_BASE_URL}${path}`);
+  // If running in some environments, API_BASE_URL might not include the protocol
+  const fullUrl = API_BASE_URL.startsWith('http') ? API_BASE_URL : `http://${API_BASE_URL}`;
+  const url = new URL(`${fullUrl}${normalizedPath}`);
 
   const headers = new Headers(options.headers || {});
   if (token) {

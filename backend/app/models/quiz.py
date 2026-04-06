@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from app.database import Base
+from app.models.enums import QuizTypeEnum
 
 class Quiz(Base):
     __tablename__ = "quizzes"
@@ -9,6 +10,7 @@ class Quiz(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
+    quiz_type = Column(SQLEnum(QuizTypeEnum), nullable=False, default=QuizTypeEnum.REGULAR)
     created_by_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     university_id = Column(Integer, ForeignKey("universities.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

@@ -9,7 +9,8 @@ class QuizSubmission(Base):
     id = Column(Integer, primary_key=True, index=True)
     quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    answers = Column(Text, nullable=False) # Store as JSON string of indices
+    session_id = Column(Integer, ForeignKey("sessions.id", ondelete="SET NULL"), nullable=True)
+    answers = Column(Text, nullable=True) # Store as JSON string of indices
     score = Column(Float, nullable=True) # For grading
     status = Column(String, default="pending") # pending, completed
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

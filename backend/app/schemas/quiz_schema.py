@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
+from app.models.enums import QuizTypeEnum
 
 class QuizQuestionBase(BaseModel):
     question_text: str
@@ -17,9 +18,10 @@ class QuizQuestionDTO(QuizQuestionBase):
 class QuizBase(BaseModel):
     title: str
     description: Optional[str] = None
+    quiz_type: QuizTypeEnum = QuizTypeEnum.REGULAR
 
 class QuizCreate(QuizBase):
-    questions: List[QuizQuestionCreate]
+    questions: Optional[List[QuizQuestionCreate]] = []
 
 class QuizDTO(QuizBase):
     id: int
@@ -31,13 +33,16 @@ class QuizDTO(QuizBase):
 
 class QuizSubmissionCreate(BaseModel):
     quiz_id: int
-    answers: str # JSON string of indices
+    answers: Optional[str] = None # JSON string of indices
+    session_id: Optional[int] = None
+    score: Optional[float] = None
 
 class QuizSubmissionDTO(BaseModel):
     id: int
     quiz_id: int
     user_id: int
-    answers: str
+    session_id: Optional[int] = None
+    answers: Optional[str] = None
     score: Optional[float] = None
     status: str
     created_at: datetime

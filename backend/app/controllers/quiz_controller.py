@@ -33,7 +33,7 @@ async def submit_quiz(
     db: AsyncSession = Depends(get_db),
     current_user = Depends(check_role([UserRoleEnum.STUDENT]))
 ):
-    return await QuizService.submit_quiz(db, current_user.id, data.quiz_id, data.answers)
+    return await QuizService.submit_quiz(db, current_user.id, data.quiz_id, data.model_dump())
 
 @router.get("/submissions/{quiz_id}", response_model=List[QuizSubmissionDTO])
 async def list_quiz_submissions(

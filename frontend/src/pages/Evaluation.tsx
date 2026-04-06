@@ -41,7 +41,7 @@ function ScoreCircle({ score, label, primary = false }: { score: number, label: 
 }
 
 export default function Evaluation() {
-  const { evaluation: activeEvaluation, resetSession } = useSessionStore();
+  const { evaluation: activeEvaluation, resetSession, activeQuizId } = useSessionStore();
   const [showDetails, setShowDetails] = useState(false);
   const [compareMode, setCompareMode] = useState<'both' | 'detected' | 'actual'>('both');
 
@@ -73,12 +73,18 @@ export default function Evaluation() {
              <span className="badge bg-white/10 text-white border-white/20 px-3 py-1 text-xs">Patient #{summary.patient_id ?? 'N/A'}</span>
            </div>
            <div className="flex gap-3">
-             <Link to="/dashboard" onClick={handleNewTest} className="btn-secondary py-2 px-4 shadow-xl shadow-black/20 text-sm border-0 bg-white/10 hover:bg-white/20 text-white">
-                Dashboard
+             <Link
+               to={activeQuizId ? "/quizzes" : "/dashboard"}
+               onClick={handleNewTest}
+               className="btn-secondary py-2 px-4 shadow-xl shadow-black/20 text-sm border-0 bg-white/10 hover:bg-white/20 text-white"
+             >
+                {activeQuizId ? 'Back to Quizzes' : 'Dashboard'}
              </Link>
-             <Link to="/session" onClick={handleNewTest} className="btn-primary py-2 px-4 shadow-xl shadow-black/20 text-sm border-0 flex items-center gap-2">
-                <RefreshCcw size={16} /> Start New Session
-             </Link>
+             {!activeQuizId && (
+               <Link to="/session" onClick={handleNewTest} className="btn-primary py-2 px-4 shadow-xl shadow-black/20 text-sm border-0 flex items-center gap-2">
+                  <RefreshCcw size={16} /> Start New Session
+               </Link>
+             )}
            </div>
         </header>
 

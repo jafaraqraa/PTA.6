@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { apiListQuizzes, apiCreateQuiz, apiListQuizSubmissions, apiAddNote } from '../../api/api';
 import { useAuthStore } from '../../store/authStore';
-import { Plus, BookOpen, Clock, CheckCircle, Users, MessageSquare } from 'lucide-react';
+import { Plus, BookOpen, Clock, CheckCircle, Users, MessageSquare, Monitor, X, Trash2 } from 'lucide-react';
 import Modal from '../../components/Modal';
+import clsx from 'clsx';
 
 export default function QuizzesPage() {
   const { user } = useAuthStore();
@@ -22,7 +23,10 @@ export default function QuizzesPage() {
   // Quiz Form State
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [questions, setQuestions] = useState<any[]>([{ question_text: '', options: ['', '', '', ''], correct_option: 0 }]);
+  const [quizType, setQuizType] = useState<'regular' | 'simulator'>('regular');
+  const [questions, setQuestions] = useState<any[]>([
+    { question_text: '', options: ['', ''], correct_option: 0 }
+  ]);
 
   const fetchQuizzes = async () => {
     try {
@@ -40,12 +44,36 @@ export default function QuizzesPage() {
   }, []);
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { question_text: '', options: ['', '', '', ''], correct_option: 0 }]);
+    setQuestions([...questions, { question_text: '', options: ['', ''], correct_option: 0 }]);
+  };
+
+  const handleRemoveQuestion = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index));
   };
 
   const handleQuestionChange = (index: number, field: string, value: any) => {
     const updated = [...questions];
     updated[index] = { ...updated[index], [field]: value };
+    setQuestions(updated);
+  };
+
+  const handleAddOption = (qIndex: number) => {
+    const updated = [...questions];
+    updated[qIndex].options.push('');
+    setQuestions(updated);
+  };
+
+  const handleRemoveOption = (qIndex: number, oIndex: number) => {
+    const updated = [...questions];
+    if (updated[qIndex].options.length <= 2) {
+      alert("At least 2 options are required.");
+      return;
+    }
+    updated[qIndex].options = updated[qIndex].options.filter((_: any, i: number) => i !== oIndex);
+    // Adjust correct option if needed
+    if (updated[qIndex].correct_option >= updated[qIndex].options.length) {
+      updated[qIndex].correct_option = 0;
+    }
     setQuestions(updated);
   };
 
@@ -61,10 +89,11 @@ export default function QuizzesPage() {
       const payload = {
         title,
         description,
-        questions: questions.map(q => ({
+        quiz_type: quizType,
+        questions: quizType === 'regular' ? questions.map(q => ({
           ...q,
           options: JSON.stringify(q.options)
-        }))
+        })) : []
       };
       await apiCreateQuiz(payload);
       setIsModalOpen(false);
@@ -72,7 +101,8 @@ export default function QuizzesPage() {
       // Reset
       setTitle('');
       setDescription('');
-      setQuestions([{ question_text: '', options: ['', '', '', ''], correct_option: 0 }]);
+      setQuizType('regular');
+      setQuestions([{ question_text: '', options: ['', ''], correct_option: 0 }]);
     } catch (err: any) {
       alert(err.message);
     }
@@ -128,8 +158,11 @@ export default function QuizzesPage() {
         {quizzes.map((quiz) => (
           <div key={quiz.id} className="card p-6 space-y-4">
             <div className="flex items-start justify-between">
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                <BookOpen size={24} />
+              <div className={clsx(
+                "p-2 rounded-lg",
+                quiz.quiz_type === 'simulator' ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"
+              )}>
+                {quiz.quiz_type === 'simulator' ? <Monitor size={24} /> : <BookOpen size={24} />}
               </div>
               <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
                 <Clock size={14} />
@@ -137,12 +170,20 @@ export default function QuizzesPage() {
               </span>
             </div>
             <div>
+              <div className="flex items-center gap-2 mb-1">
+                 <span className={clsx(
+                   "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border",
+                   quiz.quiz_type === 'simulator' ? "border-purple-200 bg-purple-50 text-purple-700" : "border-blue-200 bg-blue-50 text-blue-700"
+                 )}>
+                   {quiz.quiz_type}
+                 </span>
+              </div>
               <h3 className="font-bold text-slate-900 text-lg">{quiz.title}</h3>
               <p className="text-sm text-slate-500 line-clamp-2">{quiz.description}</p>
             </div>
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
               <span className="text-sm font-medium text-slate-600">
-                {quiz.questions?.length || 0} Questions
+                {quiz.quiz_type === 'simulator' ? 'Simulator Task' : `${quiz.questions?.length || 0} Questions`}
               </span>
               <button
                 onClick={() => handleViewSubmissions(quiz)}
@@ -162,6 +203,33 @@ export default function QuizzesPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setQuizType('regular')}
+                className={clsx(
+                  "p-4 rounded-xl border-2 text-left transition-all",
+                  quizType === 'regular' ? "border-primary-500 bg-primary-50 shadow-sm" : "border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <BookOpen size={24} className={quizType === 'regular' ? "text-primary-600" : "text-slate-400"} />
+                <div className="mt-2 font-bold text-slate-900">Regular Quiz</div>
+                <div className="text-xs text-slate-500">Multiple choice questions</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setQuizType('simulator')}
+                className={clsx(
+                  "p-4 rounded-xl border-2 text-left transition-all",
+                  quizType === 'simulator' ? "border-purple-500 bg-purple-50 shadow-sm" : "border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <Monitor size={24} className={quizType === 'simulator' ? "text-purple-600" : "text-slate-400"} />
+                <div className="mt-2 font-bold text-slate-900">Simulator Quiz</div>
+                <div className="text-xs text-slate-500">Task-based learning</div>
+              </button>
+            </div>
+
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-1">Quiz Title</label>
               <input
@@ -184,56 +252,88 @@ export default function QuizzesPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-slate-900">Questions</h3>
-              <button
-                type="button"
-                onClick={handleAddQuestion}
-                className="text-primary-600 text-sm font-bold flex items-center gap-1"
-              >
-                <Plus size={16} /> Add Question
-              </button>
-            </div>
-
-            {questions.map((q, qIndex) => (
-              <div key={qIndex} className="p-4 bg-slate-50 rounded-xl space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                    Question {qIndex + 1}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="input-field"
-                    value={q.question_text}
-                    onChange={(e) => handleQuestionChange(qIndex, 'question_text', e.target.value)}
-                    placeholder="Enter question text..."
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {q.options.map((opt: string, oIndex: number) => (
-                    <div key={oIndex} className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name={`correct-${qIndex}`}
-                        checked={q.correct_option === oIndex}
-                        onChange={() => handleQuestionChange(qIndex, 'correct_option', oIndex)}
-                      />
-                      <input
-                        type="text"
-                        required
-                        className="input-field text-sm py-1.5"
-                        value={opt}
-                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-                        placeholder={`Option ${oIndex + 1}`}
-                      />
-                    </div>
-                  ))}
-                </div>
+          {quizType === 'regular' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-slate-900">Questions</h3>
+                <button
+                  type="button"
+                  onClick={handleAddQuestion}
+                  className="text-primary-600 text-sm font-bold flex items-center gap-1"
+                >
+                  <Plus size={16} /> Add Question
+                </button>
               </div>
-            ))}
-          </div>
+
+              {questions.map((q, qIndex) => (
+                <div key={qIndex} className="p-4 bg-slate-50 rounded-xl space-y-4 relative group">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveQuestion(qIndex)}
+                    className="absolute top-2 right-2 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                      Question {qIndex + 1}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="input-field"
+                      value={q.question_text}
+                      onChange={(e) => handleQuestionChange(qIndex, 'question_text', e.target.value)}
+                      placeholder="Enter question text..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-slate-500 uppercase">Options</label>
+                    {q.options.map((opt: string, oIndex: number) => (
+                      <div key={oIndex} className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name={`correct-${qIndex}`}
+                          checked={q.correct_option === oIndex}
+                          onChange={() => handleQuestionChange(qIndex, 'correct_option', oIndex)}
+                        />
+                        <input
+                          type="text"
+                          required
+                          className="input-field text-sm py-1.5"
+                          value={opt}
+                          onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                          placeholder={`Option ${oIndex + 1}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveOption(qIndex, oIndex)}
+                          className="text-slate-300 hover:text-rose-500"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleAddOption(qIndex)}
+                      className="text-primary-600 text-xs font-bold flex items-center gap-1 mt-1"
+                    >
+                      <Plus size={14} /> Add Option
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {quizType === 'simulator' && (
+            <div className="p-8 bg-purple-50 rounded-2xl border border-purple-100 text-center space-y-2">
+               <Monitor className="mx-auto text-purple-500" size={32} />
+               <h4 className="font-bold text-purple-900">Simulator Quiz Mode</h4>
+               <p className="text-sm text-purple-700">This quiz will launch the PTA simulator. The final evaluation score will be used as the student's grade.</p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-4 border-t">
             <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">

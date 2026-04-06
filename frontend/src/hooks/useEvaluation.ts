@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EvaluationService } from '../services/evaluationService';
 import { useSessionStore } from '../store/sessionStore';
+import { apiSubmitQuiz } from '../api/api';
 import type { FinalInterpretationCreateDTO } from '../types';
 
 // ─────────────────────────────────────────────────────────────
@@ -12,7 +13,7 @@ export function useEvaluation() {
   const [error,   setError]   = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const { session, evaluation, setEvaluation } = useSessionStore();
+  const { session, evaluation, setEvaluation, activeQuizId, setActiveQuizId } = useSessionStore();
 
   const submitInterpretation = useCallback(async (
     interpretations: FinalInterpretationCreateDTO[]
@@ -22,6 +23,22 @@ export function useEvaluation() {
     setError(null);
     try {
       const result = await EvaluationService.endAndEvaluate(session.id, interpretations);
+
+      // If this session is part of a quiz, submit to quiz system
+      if (activeQuizId) {
+        try {
+          await apiSubmitQuiz({
+            quiz_id: activeQuizId,
+            session_id: session.id,
+            score: result.summary.overall_score
+          });
+        } catch (quizErr) {
+          console.error("Failed to link simulator result to quiz", quizErr);
+        }
+        // Don't clear activeQuizId yet so evaluation page can show quiz-specific UI if needed
+        // but we've successfully linked them.
+      }
+
       setEvaluation(result);
       navigate('/evaluation');
     } catch (e) {
@@ -29,7 +46,7 @@ export function useEvaluation() {
     } finally {
       setLoading(false);
     }
-  }, [session, setEvaluation, navigate]);
+  }, [session, setEvaluation, navigate, activeQuizId]);
 
   return { evaluation, loading, error, submitInterpretation };
 }
