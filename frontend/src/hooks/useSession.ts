@@ -17,7 +17,7 @@ export function useSession() {
     setLoading(true);
     setError(null);
     try {
-      const newSession = await SessionService.start(userId);
+      const newSession = await SessionService.start();
       setSession(newSession);
       navigate('/session');
     } catch (e) {
