@@ -23,9 +23,15 @@ source venv/bin/activate
 pip install -r requirements.txt
 # If you encounter bcrypt issues: pip install bcrypt==4.0.1
 
+# New setup script (recommended)
+python scripts/setup.py
+
+# Manual steps
 alembic upgrade head
 export PYTHONPATH=.
 python scripts/seed.py
+
+# Import patient data
 python scripts/import_patients_json.py data/test_patient.json
 
 python -m uvicorn app.main:app --reload
