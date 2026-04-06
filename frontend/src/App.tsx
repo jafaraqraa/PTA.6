@@ -13,8 +13,12 @@ import AppLayout from './components/AppLayout';
 import UsersPage from './pages/management/UsersPage';
 import UniversitiesPage from './pages/management/UniversitiesPage';
 import SubscriptionsPage from './pages/management/SubscriptionsPage';
+import QuizzesPage from './pages/management/QuizzesPage';
+import StudentQuizzes from './pages/management/StudentQuizzes';
+import { useAuthStore } from './store/authStore';
 
 export default function App() {
+  const { user } = useAuthStore();
   return (
     <BrowserRouter>
       <Routes>
@@ -36,6 +40,9 @@ export default function App() {
             <ProtectedRoute allowedRoles={['super_admin', 'university_admin', 'lab_admin']}>
               <UsersPage />
             </ProtectedRoute>
+          } />
+          <Route path="/quizzes" element={
+            user?.role === 'student' ? <StudentQuizzes /> : <QuizzesPage />
           } />
           <Route path="/universities" element={
             <ProtectedRoute allowedRoles={['super_admin']}>

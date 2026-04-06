@@ -7,6 +7,8 @@ import type {
   StoredThreshold,
   LoginRequest,
   Token,
+  University,
+  User,
 } from '../types';
 import { useAuthStore } from '../store/authStore';
 
@@ -73,6 +75,54 @@ export async function apiLogin(dto: LoginRequest): Promise<Token> {
     method: 'POST',
     body: JSON.stringify(dto),
   });
+  return res.json();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Quiz API
+// ─────────────────────────────────────────────────────────────
+
+export async function apiListQuizzes(): Promise<any[]> {
+  const res = await request('/quizzes/');
+  return res.json();
+}
+
+export async function apiCreateQuiz(dto: any): Promise<any> {
+  const res = await request('/quizzes/', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+export async function apiSubmitQuiz(dto: any): Promise<any> {
+  const res = await request('/quizzes/submit', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+export async function apiGetMySubmissions(): Promise<any[]> {
+  const res = await request('/quizzes/my-submissions');
+  return res.json();
+}
+
+export async function apiAddNote(dto: any): Promise<any> {
+  const res = await request('/quizzes/notes', {
+    method: 'POST',
+    body: JSON.stringify(dto),
+  });
+  return res.json();
+}
+
+export async function apiGetStudentNotes(studentId: number): Promise<any[]> {
+  const res = await request(`/quizzes/notes/${studentId}`);
+  return res.json();
+}
+
+export async function apiListQuizSubmissions(quizId: number): Promise<any[]> {
+  const res = await request(`/quizzes/submissions/${quizId}`);
   return res.json();
 }
 

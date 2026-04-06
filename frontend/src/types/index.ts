@@ -195,6 +195,7 @@ export interface SessionEvaluationDTO {
 export interface RecentSession {
   id: number;
   patientId: number;
+  student_name?: string;
   date: string;
   score: number;
   duration: string;

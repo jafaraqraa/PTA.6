@@ -16,7 +16,9 @@ import {
   ArrowRight,
   School,
   Users,
-  CreditCard
+  CreditCard,
+  FileText,
+  ClipboardList
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -96,17 +98,17 @@ export default function Dashboard() {
             <>
               <StatCard label="Assigned Students" value={stats.total_students} icon={<Users size={24} />} color="indigo" />
               <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="emerald" />
-              <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="amber" />
-              <StatCard label="Active Status" value="Online" icon={<ShieldCheck size={24} />} color="cyan" />
+              <StatCard label="My Quizzes" value={stats.total_quizzes} icon={<FileText size={24} />} color="amber" />
+              <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="cyan" />
             </>
           )}
 
           {user?.role === 'student' && (
             <>
               <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="indigo" />
-              <StatCard label="Completed" value={stats.completed} icon={<CheckCircle size={24} />} color="emerald" />
+              <StatCard label="Quizzes Taken" value={stats.total_quizzes} icon={<ClipboardList size={24} />} color="emerald" />
               <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="amber" />
-              <StatCard label="Last Score" value={`${stats.last_performance}%`} icon={<Award size={24} />} color="cyan" />
+              <StatCard label="Last Quiz Score" value={`${stats.last_quiz_score}%`} icon={<Award size={24} />} color="cyan" />
             </>
           )}
         </div>
