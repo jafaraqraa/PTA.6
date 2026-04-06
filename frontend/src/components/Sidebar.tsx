@@ -37,10 +37,10 @@ export default function Sidebar() {
       roles: ['super_admin']
     },
     {
-      label: 'Users',
+      label: (user?.role === 'lab_admin' || user?.role === 'university_admin') ? 'Students' : 'Users',
       to: '/users',
       icon: Users,
-      roles: ['super_admin', 'university_admin']
+      roles: ['super_admin', 'university_admin', 'lab_admin']
     },
     {
       label: 'Profile',

@@ -33,7 +33,7 @@ export default function App() {
 
           {/* Management Routes */}
           <Route path="/users" element={
-            <ProtectedRoute allowedRoles={['super_admin', 'university_admin']}>
+            <ProtectedRoute allowedRoles={['super_admin', 'university_admin', 'lab_admin']}>
               <UsersPage />
             </ProtectedRoute>
           } />

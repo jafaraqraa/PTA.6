@@ -16,8 +16,9 @@ async def get_dashboard_stats(
         return await AnalyticsService.get_super_admin_stats(db)
     elif current_user.role == UserRoleEnum.UNIVERSITY_ADMIN:
         return await AnalyticsService.get_university_admin_stats(db, current_user.university_id)
+    elif current_user.role == UserRoleEnum.LAB_ADMIN:
+        return await AnalyticsService.get_lab_admin_stats(db, current_user.university_id)
     elif current_user.role == UserRoleEnum.STUDENT:
         return await AnalyticsService.get_student_stats(db, current_user.id)
     else:
-        # Placeholder for Lab Admin
-        return {"stats": "Coming soon"}
+        raise HTTPException(status_code=403, detail="Not authorized")

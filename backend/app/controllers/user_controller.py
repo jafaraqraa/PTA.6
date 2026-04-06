@@ -16,8 +16,10 @@ async def list_users(
 ):
     if current_user.role == UserRoleEnum.SUPER_ADMIN:
         return await UserService.list_users(db)
-    elif current_user.role in [UserRoleEnum.UNIVERSITY_ADMIN, UserRoleEnum.LAB_ADMIN]:
+    elif current_user.role == UserRoleEnum.UNIVERSITY_ADMIN:
         return await UserService.list_users(db, university_id=current_user.university_id)
+    elif current_user.role == UserRoleEnum.LAB_ADMIN:
+        return await UserService.list_users(db, university_id=current_user.university_id, role=UserRoleEnum.STUDENT)
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 

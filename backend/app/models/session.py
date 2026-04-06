@@ -22,6 +22,8 @@ class Session(Base):
         back_populates="sessions",
     )
 
+    user = relationship("User")
+
     # One-to-Many with Attempt
     attempts = relationship(
         "Attempt",
