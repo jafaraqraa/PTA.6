@@ -18,8 +18,8 @@ async def seed_data():
         await db.commit()
 
         # 1) Universities
-        najah = University(name="An-Najah University", domain="najah")
-        hebron = University(name="Hebron University", domain="hebron")
+        najah = University(name="An-Najah University")
+        hebron = University(name="Hebron University")
         db.add_all([najah, hebron])
         await db.commit()
         await db.refresh(najah)

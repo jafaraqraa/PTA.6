@@ -1,5 +1,8 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from app.database import AsyncSessionLocal
 from app.controllers import (
     session_controller,
     auth_controller,
@@ -10,6 +13,20 @@ from app.controllers import (
 )
 
 app = FastAPI(title="PTA Simulator Backend")
+
+@app.on_event("startup")
+async def verify_schema():
+    """Safety layer: Verify DB schema matches expected ORM models on startup."""
+    async with AsyncSessionLocal() as db:
+        try:
+            result = await db.execute(text("PRAGMA table_info(universities)"))
+            columns = [row[1] for row in result.fetchall()]
+            if 'domain' in columns:
+                logging.error("DATABASE SCHEMA MISMATCH: 'domain' column still exists in 'universities' table.")
+                # We don't crash here but log a severe error.
+                # In strict environments, you might sys.exit(1)
+        except Exception as e:
+            logging.error(f"Failed to verify database schema: {e}")
 
 app.add_middleware(
     CORSMiddleware,
