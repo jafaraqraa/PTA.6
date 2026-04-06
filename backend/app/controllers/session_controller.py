@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services.session_manager import SessionManager
-from app.services.security_utils import get_current_user, get_current_university, enforce_multi_tenancy, check_role
+from app.services.security_utils import get_current_user, enforce_multi_tenancy, check_role
 from app.models.enums import UserRoleEnum
 from app.schemas.attempt_schema import AttemptCreateDTO
 from app.schemas.stored_threshold_schema import CreateStoredThresholdDTO
@@ -13,11 +13,8 @@ router = APIRouter()
 @router.post("/startSession")
 async def start_session(
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(get_current_user),
-    current_university = Depends(get_current_university)
+    current_user = Depends(get_current_user)
 ):
-    enforce_multi_tenancy(current_user, current_university.id)
-
     try:
         session = await SessionManager.start_session(db, current_user.id)
         return session
@@ -37,10 +34,8 @@ async def start_session(
 async def play_tone(
     dto: AttemptCreateDTO,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(get_current_user),
-    current_university = Depends(get_current_university)
+    current_user = Depends(get_current_user)
 ):
-    enforce_multi_tenancy(current_user, current_university.id)
     try:
         result = await SessionManager.play_tone(
             db,
@@ -63,10 +58,8 @@ async def play_tone(
 async def store_tone(
     dto: CreateStoredThresholdDTO,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(get_current_user),
-    current_university = Depends(get_current_university)
+    current_user = Depends(get_current_user)
 ):
-    enforce_multi_tenancy(current_user, current_university.id)
     try:
         threshold = await SessionManager.store_threshold(db, dto)
         return {
@@ -88,10 +81,8 @@ async def store_tone(
 async def end_session(
     dto: EndSessionDTO,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(get_current_user),
-    current_university = Depends(get_current_university)
+    current_user = Depends(get_current_user)
 ):
-    enforce_multi_tenancy(current_user, current_university.id)
     try:
         results = await SessionManager.end_session(
             db,

@@ -11,39 +11,6 @@ from app.models.enums import UserRoleEnum
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-def get_domain_from_request(request: Request):
-    host = request.headers.get("host", "")
-    # Robustly handle host with port (e.g. najah.localhost:8000)
-    host_parts = host.split(":")[0].split(".")
-
-    # If the first part is 'localhost' or an IP, it's not a subdomain
-    if host_parts[0] in ["localhost", "127", ""] or host_parts[0].isdigit():
-        domain = request.query_params.get("domain")
-        # Special case: allow extracting from custom header if frontend sends it
-        if not domain:
-            domain = request.headers.get("X-University-Domain")
-    else:
-        domain = host_parts[0]
-    return domain
-
-async def get_current_university(request: Request, db: AsyncSession = Depends(get_db)):
-    domain = get_domain_from_request(request)
-
-    if not domain:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Domain is required"
-        )
-
-    university = await UniversityService.get_university_by_domain(db, domain)
-    if not university:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"University with domain '{domain}' not found"
-        )
-
-    return university
-
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db)
@@ -83,10 +50,10 @@ def check_role(allowed_roles: list[UserRoleEnum]):
         return current_user
     return role_checker
 
-def enforce_multi_tenancy(user, university_id: int):
+def enforce_multi_tenancy(user, target_university_id: int):
     if user.role == UserRoleEnum.SUPER_ADMIN:
         return
-    if user.university_id != university_id:
+    if user.university_id != target_university_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied: University mismatch"

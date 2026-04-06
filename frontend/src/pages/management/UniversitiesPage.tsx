@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiListUniversities } from '../../api/api';
 import { University } from '../../types';
-import { Plus, School, Globe, Edit2 } from 'lucide-react';
+import { Plus, School, Edit2 } from 'lucide-react';
 import UniversityModal from './UniversityModal';
 
 export default function UniversitiesPage() {
@@ -43,7 +43,7 @@ export default function UniversitiesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Universities</h1>
-          <p className="text-slate-500 font-medium">Manage institutional tenants and their domains.</p>
+          <p className="text-slate-500 font-medium">Manage institutional tenants.</p>
         </div>
         <button
           onClick={handleAdd}
@@ -71,10 +71,6 @@ export default function UniversitiesPage() {
 
             <h3 className="text-xl font-bold text-slate-900 mb-2">{uni.name}</h3>
 
-            <div className="flex items-center gap-2 text-slate-500 font-medium mb-4">
-              <Globe size={16} className="text-slate-400" />
-              <span className="text-sm">{uni.domain}.localhost</span>
-            </div>
 
             <div className="pt-6 border-t border-slate-50 mt-auto">
               <div className="flex items-center justify-between">
