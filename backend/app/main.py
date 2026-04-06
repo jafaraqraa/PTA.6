@@ -9,7 +9,8 @@ from app.controllers import (
     user_controller,
     university_controller,
     subscription_controller,
-    analytics_controller
+    analytics_controller,
+    quiz_controller
 )
 
 app = FastAPI(title="PTA Simulator Backend")
@@ -40,6 +41,7 @@ app.include_router(user_controller.router, prefix="/users", tags=["Users"])
 app.include_router(university_controller.router, prefix="/universities", tags=["Universities"])
 app.include_router(subscription_controller.router, prefix="/subscriptions", tags=["Subscriptions"])
 app.include_router(analytics_controller.router, prefix="/analytics", tags=["Analytics"])
+app.include_router(quiz_controller.router, prefix="/quizzes", tags=["Quizzes"])
 
 @app.get("/")
 def start():

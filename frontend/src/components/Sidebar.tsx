@@ -9,7 +9,9 @@ import {
   BarChart3,
   UserCircle,
   Play,
-  ShieldCheck
+  ShieldCheck,
+  ClipboardList,
+  GraduationCap
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import clsx from 'clsx';
@@ -41,6 +43,18 @@ export default function Sidebar() {
       to: '/users',
       icon: Users,
       roles: ['super_admin', 'university_admin', 'lab_admin']
+    },
+    {
+      label: 'Quizzes',
+      to: '/quizzes',
+      icon: ClipboardList,
+      roles: ['university_admin', 'lab_admin', 'student']
+    },
+    {
+      label: 'Simulator',
+      to: '/session',
+      icon: Play,
+      roles: ['student']
     },
     {
       label: 'Profile',

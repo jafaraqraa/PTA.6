@@ -4,6 +4,8 @@ from app.models.user import User
 from app.models.university import University
 from app.models.subscription import Subscription
 from app.models.session import Session
+from app.models.quiz import Quiz
+from app.models.quiz_submission import QuizSubmission, InstructorNote
 from app.models.enums import UserRoleEnum
 from datetime import datetime, timezone
 
@@ -57,7 +59,7 @@ class AnalyticsService:
         }
 
     @staticmethod
-    async def get_lab_admin_stats(db: AsyncSession, university_id: int):
+    async def get_lab_admin_stats(db: AsyncSession, university_id: int, user_id: int):
         total_students_res = await db.execute(
             select(func.count(User.id)).where(
                 User.university_id == university_id,
@@ -68,6 +70,9 @@ class AnalyticsService:
             select(func.count(Session.id))
             .join(User, Session.user_id == User.id)
             .where(User.university_id == university_id)
+        )
+        total_quizzes_res = await db.execute(
+            select(func.count(Quiz.id)).where(Quiz.created_by_id == user_id)
         )
 
         # Get recent sessions for the dashboard
@@ -83,6 +88,7 @@ class AnalyticsService:
         return {
             "total_students": total_students_res.scalar(),
             "total_sessions": total_sessions_res.scalar(),
+            "total_quizzes": total_quizzes_res.scalar(),
             "avg_performance": 0,
             "recent_sessions": [
                 {
@@ -105,17 +111,27 @@ class AnalyticsService:
                 Session.end_time != None
             )
         )
+        total_quizzes_res = await db.execute(
+            select(func.count(QuizSubmission.id)).where(QuizSubmission.user_id == user_id)
+        )
 
         # Get recent sessions for the dashboard
         recent_sessions_query = select(Session).where(Session.user_id == user_id).order_by(Session.start_time.desc()).limit(5)
         recent_sessions_res = await db.execute(recent_sessions_query)
         recent_sessions = recent_sessions_res.scalars().all()
 
+        # Get last quiz score
+        last_quiz_res = await db.execute(
+            select(QuizSubmission.score).where(QuizSubmission.user_id == user_id).order_by(QuizSubmission.created_at.desc()).limit(1)
+        )
+        last_quiz_score = last_quiz_res.scalar() or 0
+
         return {
             "total_sessions": total_sessions_res.scalar(),
             "completed": completed_sessions_res.scalar(),
+            "total_quizzes": total_quizzes_res.scalar(),
             "avg_performance": 0,
-            "last_performance": 0,
+            "last_quiz_score": last_quiz_score,
             "recent_sessions": [
                 {
                     "id": s.id,
