@@ -18,6 +18,7 @@ interface SessionState {
   lastAttemptId: number | null;
   lastResponse: 'heard' | 'not_heard' | null;
   evaluation: SessionEvaluationDTO | null;
+  activeQuizId: number | null;
   isLoading: boolean;
   error: string | null;
 
@@ -28,6 +29,7 @@ interface SessionState {
   setLastResponse: (r: 'heard' | 'not_heard' | null) => void;
   addStoredThreshold: (t: StoredThreshold) => void;
   setEvaluation: (e: SessionEvaluationDTO) => void;
+  setActiveQuizId: (id: number | null) => void;
   setLoading: (v: boolean) => void;
   setError: (msg: string | null) => void;
   resetSession: () => void;
@@ -43,6 +45,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   lastAttemptId: null,
   lastResponse: null,
   evaluation: null,
+  activeQuizId: null,
   isLoading: false,
   error: null,
 
@@ -64,6 +67,7 @@ export const useSessionStore = create<SessionState>((set) => ({
     ],
   })),
   setEvaluation: (e) => set({ evaluation: e }),
+  setActiveQuizId: (id) => set({ activeQuizId: id }),
   setLoading: (v) => set({ isLoading: v }),
   setError: (msg) => set({ error: msg }),
   resetSession: () =>
@@ -74,6 +78,7 @@ export const useSessionStore = create<SessionState>((set) => ({
       lastAttemptId: null,
       lastResponse: null,
       evaluation: null,
+      activeQuizId: null,
       error: null,
     }),
 }));

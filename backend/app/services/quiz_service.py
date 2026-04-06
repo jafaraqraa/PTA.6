@@ -4,28 +4,33 @@ from sqlalchemy.orm import selectinload
 from app.models.quiz import Quiz, QuizQuestion
 from app.models.quiz_submission import QuizSubmission, InstructorNote
 from app.schemas.quiz_schema import QuizDTO, QuizQuestionDTO, QuizSubmissionDTO, InstructorNoteDTO
+from app.models.enums import QuizTypeEnum
 from typing import List, Optional
 import json
 
 class QuizService:
     @staticmethod
     async def create_quiz(db: AsyncSession, university_id: int, creator_id: int, data: dict) -> dict:
+        quiz_type = data.pop("quiz_type", QuizTypeEnum.REGULAR)
         questions_data = data.pop("questions", [])
+
         new_quiz = Quiz(
             **data,
             university_id=university_id,
-            created_by_id=creator_id
+            created_by_id=creator_id,
+            quiz_type=quiz_type
         )
         db.add(new_quiz)
         await db.flush()
 
-        for q_data in questions_data:
-            q_obj = QuizQuestion(quiz_id=new_quiz.id, **q_data)
-            db.add(q_obj)
+        if quiz_type == QuizTypeEnum.REGULAR:
+            for q_data in questions_data:
+                q_obj = QuizQuestion(quiz_id=new_quiz.id, **q_data)
+                db.add(q_obj)
 
         await db.commit()
 
-        # Re-fetch with selectinload and convert to dict immediately
+        # Re-fetch with selectinload
         result = await db.execute(
             select(Quiz).options(selectinload(Quiz.questions)).where(Quiz.id == new_quiz.id)
         )
@@ -35,6 +40,7 @@ class QuizService:
             "id": q.id,
             "title": q.title,
             "description": q.description,
+            "quiz_type": q.quiz_type,
             "created_by_id": q.created_by_id,
             "university_id": q.university_id,
             "created_at": q.created_at,
@@ -59,6 +65,7 @@ class QuizService:
                 "id": q.id,
                 "title": q.title,
                 "description": q.description,
+                "quiz_type": q.quiz_type,
                 "created_by_id": q.created_by_id,
                 "university_id": q.university_id,
                 "created_at": q.created_at,
@@ -85,6 +92,7 @@ class QuizService:
             "id": q.id,
             "title": q.title,
             "description": q.description,
+            "quiz_type": q.quiz_type,
             "created_by_id": q.created_by_id,
             "university_id": q.university_id,
             "created_at": q.created_at,
@@ -99,29 +107,42 @@ class QuizService:
         }
 
     @staticmethod
-    async def submit_quiz(db: AsyncSession, user_id: int, quiz_id: int, answers_str: str) -> dict:
-        result = await db.execute(
+    async def submit_quiz(db: AsyncSession, user_id: int, quiz_id: int, data: dict) -> dict:
+        quiz_res = await db.execute(
             select(Quiz).options(selectinload(Quiz.questions)).where(Quiz.id == quiz_id)
         )
-        quiz = result.scalar_one_or_none()
+        quiz = quiz_res.scalar_one_or_none()
         if not quiz:
              raise Exception("Quiz not found")
 
-        questions = quiz.questions
-        submitted_answers = json.loads(answers_str)
-        correct_count = 0
-        total_count = len(questions)
+        score = data.get("score")
+        answers_str = data.get("answers")
+        session_id = data.get("session_id")
 
-        for i, q in enumerate(questions):
-             if i < len(submitted_answers) and submitted_answers[i] == q.correct_option:
-                 correct_count += 1
+        if quiz.quiz_type == QuizTypeEnum.REGULAR:
+            if not answers_str:
+                raise Exception("Answers required for regular quiz")
 
-        score = (correct_count / total_count * 100) if total_count > 0 else 0
+            questions = quiz.questions
+            submitted_answers = json.loads(answers_str)
+            correct_count = 0
+            total_count = len(questions)
+
+            for i, q in enumerate(questions):
+                 if i < len(submitted_answers) and submitted_answers[i] == q.correct_option:
+                     correct_count += 1
+
+            score = (correct_count / total_count * 100) if total_count > 0 else 0
+        else:
+            # Simulator quiz
+            if score is None:
+                raise Exception("Score required for simulator quiz")
 
         submission = QuizSubmission(
             quiz_id=quiz_id,
             user_id=user_id,
             answers=answers_str,
+            session_id=session_id,
             score=score,
             status="completed"
         )

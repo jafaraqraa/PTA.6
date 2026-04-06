@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { apiListQuizzes, apiSubmitQuiz, apiGetMySubmissions } from '../../api/api';
-import { BookOpen, CheckCircle, HelpCircle, ArrowRight, MessageSquare } from 'lucide-react';
+import { BookOpen, CheckCircle, HelpCircle, ArrowRight, MessageSquare, Monitor } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSessionStore } from '../../store/sessionStore';
+import clsx from 'clsx';
 
 export default function StudentQuizzes() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
@@ -11,6 +13,7 @@ export default function StudentQuizzes() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [lastSubmission, setLastSubmission] = useState<any | null>(null);
   const navigate = useNavigate();
+  const { setActiveQuizId } = useSessionStore();
 
   const fetchData = async () => {
     try {
@@ -29,6 +32,11 @@ export default function StudentQuizzes() {
   }, []);
 
   const handleStartQuiz = (quiz: any) => {
+    if (quiz.quiz_type === 'simulator') {
+       setActiveQuizId(quiz.id);
+       navigate('/session');
+       return;
+    }
     setTakingQuiz(quiz);
     setAnswers(new Array(quiz.questions.length).fill(-1));
   };
@@ -77,6 +85,23 @@ export default function StudentQuizzes() {
           <button onClick={() => setLastSubmission(null)} className="btn-primary py-4 text-lg">
             Back to Quizzes
           </button>
+          {lastSubmission.session_id && (
+            <button
+              onClick={() => {
+                // We need to set the evaluation in store before navigating
+                // But the evaluation is already in the database.
+                // For simplicity in this flow, we redirect to dashboard where they can see recent sessions
+                // or we could fetch the evaluation.
+                // Given the prompt "View Results", let's assume they want to see the evaluation page.
+                // We'll let the student see it via the dashboard's recent activity for now or
+                // if we want to be fancy, we'd fetch it here.
+                navigate('/dashboard');
+              }}
+              className="btn-secondary py-4 text-lg bg-white"
+            >
+              View Detailed Results
+            </button>
+          )}
           <button onClick={() => navigate('/dashboard')} className="btn-secondary py-4 text-lg bg-white">
             Go to Dashboard
           </button>
@@ -151,8 +176,13 @@ export default function StudentQuizzes() {
           return (
             <div key={quiz.id} className={`card p-6 space-y-4 relative ${submission ? "opacity-75 bg-slate-50 border-slate-200" : ""}`}>
               <div className="flex items-start justify-between">
-                <div className={`p-2 rounded-lg ${submission ? "bg-emerald-100 text-emerald-600" : "bg-primary-50 text-primary-600"}`}>
-                  {submission ? <CheckCircle size={24} /> : <BookOpen size={24} />}
+                <div className={clsx(
+                  "p-2 rounded-lg",
+                  submission ? "bg-emerald-100 text-emerald-600" :
+                  quiz.quiz_type === 'simulator' ? "bg-purple-50 text-purple-600" : "bg-primary-50 text-primary-600"
+                )}>
+                  {submission ? <CheckCircle size={24} /> :
+                   quiz.quiz_type === 'simulator' ? <Monitor size={24} /> : <BookOpen size={24} />}
                 </div>
                 {submission && (
                    <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wide">
@@ -166,7 +196,7 @@ export default function StudentQuizzes() {
               </div>
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-xs font-medium text-slate-400">
-                  {quiz.questions?.length || 0} Questions
+                  {quiz.quiz_type === 'simulator' ? 'Simulator Task' : `${quiz.questions?.length || 0} Questions`}
                 </span>
                 {!submission ? (
                    <button

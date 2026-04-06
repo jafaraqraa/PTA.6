@@ -77,3 +77,8 @@ class UserRoleEnum(str, Enum):
     UNIVERSITY_ADMIN = "university_admin"
     LAB_ADMIN = "lab_admin"
     STUDENT = "student"
+
+
+class QuizTypeEnum(str, Enum):
+    REGULAR = "regular"
+    SIMULATOR = "simulator"
