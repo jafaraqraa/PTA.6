@@ -50,16 +50,21 @@ export default function UsersPage() {
 
   if (loading && users.length === 0) return <div className="p-8">Loading users...</div>;
 
+  const isLabAdmin = currentUser?.role === 'lab_admin';
+  const isUniAdmin = currentUser?.role === 'university_admin';
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
+        <h1 className="text-2xl font-bold text-slate-900">
+          {isLabAdmin ? 'Student Management' : 'User Management'}
+        </h1>
         <button
           onClick={handleAdd}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
-          Add User
+          {isLabAdmin ? 'Add Student' : 'Add User'}
         </button>
       </div>
 

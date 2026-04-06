@@ -62,6 +62,14 @@ export default function Dashboard() {
               Launch Simulator
             </Link>
           )}
+            {user?.role === 'lab_admin' && (
+              <div className="flex gap-4">
+                <Link to="/users" className="btn-primary py-4 px-6 text-lg group">
+                  <Users size={20} className="group-hover:scale-110 transition-transform" />
+                  Manage Students
+                </Link>
+              </div>
+            )}
         </div>
 
         {/* ── Stats Grid (Role-Aware) ── */}
@@ -81,6 +89,15 @@ export default function Dashboard() {
               <StatCard label="Lab Admins" value={stats.total_lab_admins} icon={<ShieldCheck size={24} />} color="emerald" />
               <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="amber" />
               <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="cyan" />
+            </>
+          )}
+
+          {user?.role === 'lab_admin' && (
+            <>
+              <StatCard label="Assigned Students" value={stats.total_students} icon={<Users size={24} />} color="indigo" />
+              <StatCard label="Total Sessions" value={stats.total_sessions} icon={<Activity size={24} />} color="emerald" />
+              <StatCard label="Avg Performance" value={`${stats.avg_performance}%`} icon={<Target size={24} />} color="amber" />
+              <StatCard label="Active Status" value="Online" icon={<ShieldCheck size={24} />} color="cyan" />
             </>
           )}
 
@@ -113,7 +130,9 @@ export default function Dashboard() {
                       <User size={20} />
                     </div>
                     <div>
-                      <p className="font-extrabold text-slate-800 text-lg">Patient #{Session.patientId}</p>
+                      <p className="font-extrabold text-slate-800 text-lg">
+                        {Session.student_name ? `Student: ${Session.student_name}` : `Patient #${Session.patientId}`}
+                      </p>
                       <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-medium">
                         <span className="flex items-center gap-1.5"><Clock size={14} className="text-slate-400" /> {Session.duration}</span>
                         <span className="text-slate-300">&bull;</span>
