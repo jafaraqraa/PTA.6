@@ -219,7 +219,6 @@ export interface User {
 export interface University {
   id: number;
   name: string;
-  domain: string;
 }
 
 export interface Token {

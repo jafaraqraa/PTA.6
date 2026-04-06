@@ -6,10 +6,8 @@ interface AuthState {
   token: string | null;
   user: User | null;
   university: University | null;
-  domain: string | null;
 
-  setAuth: (token: string, user: User, university: University) => void;
-  setDomain: (domain: string) => void;
+  setAuth: (token: string, user: User, university: University | null) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
 }
@@ -20,10 +18,8 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       university: null,
-      domain: null,
 
       setAuth: (token, user, university) => set({ token, user, university }),
-      setDomain: (domain) => set({ domain }),
       logout: () => set({ token: null, user: null, university: null }),
       isAuthenticated: () => !!get().token,
     }),

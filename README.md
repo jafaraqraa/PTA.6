@@ -1,12 +1,12 @@
 # PTA Simulator SaaS Platform
 
 ## Overview
-PTA Simulator is a SaaS platform for audiometry training. It supports multi-tenant isolation, Role-Based Access Control (RBAC), and domain-based access.
+PTA Simulator is a SaaS platform for audiometry training. It supports multi-tenant isolation, Role-Based Access Control (RBAC), and email-based university access.
 
 ### Key Features
-- **Multi-Tenant Isolation**: Each university has its own domain and data isolation.
+- **Multi-Tenant Isolation**: Users are isolated based on their university assignment.
 - **RBAC**: Supports Super Admin, University Admin, Lab Admin, and Student roles.
-- **Domain-Based Access**: Automatic university detection based on the request domain.
+- **Email-Based Access**: Login using email and password; university context is automatically derived from the user profile.
 - **Subscription Validation**: Enforces active subscriptions for university access.
 
 ## Quick Start
@@ -40,22 +40,16 @@ npm run dev
 
 ## Local Development & Testing
 
-### University Domain Testing
-The system detects the university context from the subdomain or a `domain` query parameter.
-
-For local testing, you can use:
-- **Subdomain**: `http://najah.localhost:5173`
-- **Query Param**: `http://localhost:5173?domain=najah`
-
-**Note**: If you use `localhost` directly without a query parameter, domain detection will fail on the login page.
+### Authentication
+The system uses email-based login. There is no need for subdomains or domain query parameters. Simply log in with your email and password.
 
 ### Demo Accounts
-| Role | Email | Password | Domain |
-|------|-------|----------|--------|
-| Super Admin | admin@system.com | admin123 | any |
-| University Admin | admin@najah.com | 123456 | najah |
-| Lab Admin | lab@najah.com | 123456 | najah |
-| Student | student@najah.com | 123456 | najah |
+| Role | Email | Password | University |
+|------|-------|----------|------------|
+| Super Admin | admin@system.com | admin123 | System |
+| University Admin | admin@najah.com | 123456 | An-Najah |
+| Lab Admin | lab@najah.com | 123456 | An-Najah |
+| Student | student@najah.com | 123456 | An-Najah |
 
 ## Environment Variables
 
@@ -80,6 +74,6 @@ VITE_API_BASE_URL=http://localhost:8000
 - `POST /sessions/endSession`: End simulation and get evaluation.
 
 ## Important Notes
-- **Domain Detection**: The frontend automatically extracts the university domain and sends it to the backend.
+- **User Context**: The system automatically identifies the user's university from their profile upon login.
 - **Subscription**: Users (except Super Admin) can only log in if their university has an active subscription.
 - **RBAC**: UI elements and navigation items are shown/hidden based on the user's role.

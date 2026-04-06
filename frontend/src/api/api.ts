@@ -9,26 +9,16 @@ import type {
   Token,
 } from '../types';
 import { useAuthStore } from '../store/authStore';
-import { detectDomain } from '../utils/domain';
 
 const BASE_URL = 'http://localhost:8000';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || BASE_URL;
 
 async function request(path: string, options: RequestInit = {}): Promise<Response> {
-  const { token, domain: storedDomain } = useAuthStore.getState();
-  const detectedDomain = detectDomain();
-  // Ensure we don't send "localhost" or empty domains
-  const domain = (detectedDomain && !detectedDomain.includes('localhost')) ? detectedDomain : storedDomain;
+  const { token } = useAuthStore.getState();
 
   const url = new URL(`${API_BASE_URL}${path}`);
-  if (domain) {
-    url.searchParams.append('domain', domain);
-  }
 
   const headers = new Headers(options.headers || {});
-  if (domain) {
-    headers.set('X-University-Domain', domain);
-  }
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
@@ -174,7 +164,7 @@ export async function apiCreateSubscription(dto: any): Promise<any> {
 //  Session API
 // ─────────────────────────────────────────────────────────────
 
-export async function apiStartSession(userId: number): Promise<SessionDTO> {
+export async function apiStartSession(): Promise<SessionDTO> {
   const res = await request('/sessions/startSession', {
     method: 'POST',
   });

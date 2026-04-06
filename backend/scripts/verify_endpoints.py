@@ -6,10 +6,10 @@ BASE_URL = "http://localhost:8000"
 def test_endpoints():
     print("Testing Backend Endpoints...")
 
-    # 1. Login to get token
+    # 1. Login to get token (Domain-less)
     login_data = {"email": "admin@system.com", "password": "admin123"}
     try:
-        response = requests.post(f"{BASE_URL}/auth/login", json=login_data, params={"domain": "system"})
+        response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
         response.raise_for_status()
         token = response.json()["access_token"]
         print("✓ Login successful")
@@ -17,7 +17,7 @@ def test_endpoints():
         print(f"✗ Login failed: {e}")
         return
 
-    headers = {"Authorization": f"Bearer {token}", "X-University-Domain": "system"}
+    headers = {"Authorization": f"Bearer {token}"}
 
     # 2. Test Users
     try:

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { apiLogin } from '../api/api';
-import { detectDomain, extractDomainFromEmail } from '../utils/domain';
 import { decodeToken } from '../utils/jwt';
 import { Activity, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import type { User, UserRole, University } from '../types';
@@ -12,18 +11,10 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [domain, setDomain] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const setStoredDomain = useAuthStore((state) => state.setDomain);
-
-  useEffect(() => {
-    const d = detectDomain();
-    setDomain(d);
-    if (d) setStoredDomain(d);
-  }, [setStoredDomain]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,28 +22,6 @@ export default function Login() {
     setError(null);
 
     try {
-      let finalDomain = domain;
-
-      // Fallback: If no domain from URL, try to infer it from the email
-      if (!finalDomain) {
-        finalDomain = extractDomainFromEmail(email);
-      }
-
-      // If it's a system admin email, they can log in via any domain
-      if (email === 'admin@system.com') {
-        finalDomain = 'system';
-      }
-
-      if (!finalDomain) {
-        throw new Error('Please enter a valid university email to detect your domain.');
-      }
-
-      // Update state if we inferred a domain
-      if (!domain) {
-        setDomain(finalDomain);
-        setStoredDomain(finalDomain);
-      }
-
       const { access_token } = await apiLogin({ email, password });
       const decoded: any = decodeToken(access_token);
 
@@ -68,11 +37,10 @@ export default function Login() {
         created_at: new Date().toISOString()
       };
 
-      const university: University = {
-        id: decoded.university_id || 0,
-        name: domain,
-        domain: domain
-      };
+      const university: University | null = decoded.university_id ? {
+        id: decoded.university_id,
+        name: 'My University' // Placeholder, could be fetched
+      } : null;
 
       setAuth(access_token, user, university);
 
@@ -94,11 +62,7 @@ export default function Login() {
           </div>
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
           <p className="mt-2 text-sm text-slate-500">
-            {domain ? (
-              <>Sign in to your <span className="font-semibold text-primary-600 uppercase">{domain}</span> account</>
-            ) : (
-              'Enter your university email to sign in'
-            )}
+            Sign in to your account
           </p>
         </div>
 
